@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/gb.css">
+
+</head>
+<body>
+	<div class="container">
+	<div class="card">
+		<div class="card" style="margin-top: 30px;">
+			<div class="card-body bg-dark text-white">
+				<h2 class="card-title" align="center">
+					<b>Feedback Entries</b>
+				</h2>
+			</div>
+		</div>
+		<br>
+		<div class="d-flex p-0  text-white" style="margin-left: 10px">
+			<div class="d-flex justify-content-start">
+				<form action="#" th:action="@{/admin/welcomeAdmin}">
+					<button type="submit" class="btn btn-success btn-lg">Go
+						Back</button>
+				</form>
+			</div>
+			<div class="d-flex justify-content-end ml-auto" style="margin-right: 10px">
+				<form action="#" th:action="@{/logout}" method="POST">
+					<button type="submit" class="btn btn-success btn-lg" style=""
+						onclick="if (!(confirm('Do you want to log out?'))) return false">
+						Sign Out</button>
+				</form>
+			</div>
+		</div>
+		<br>
+		<div class="card">
+			<table class="table table-fit table-bordered">
+				<thead class="thead-dark">
+					<tr>
+						<th>#</th>
+						<th>Name</th>
+						<th>Feedback</th>
+						<th>Image</th>
+						<th>Date</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr th:each="temp : ${feedbackList}">
+						<td th:text="${temp.id}" />
+						<td th:text="${temp.userId}"/>
+						<td th:text="${temp.feedbackText}" />
+						<td><a th:href="@{'/getFeedbackImage?id=' + ${temp.id}}">[[${temp.feedbackImageName}]]</a></td>
+						<td th:text="${temp.feedbackTime}" />
+						<td>
+							<!-- Check if entry all ready approved -->
+							<div th:if="${temp.isFeedbackApproved == 'Y'}">
+								<div class="d-flex justify-content-around">
+									<div class="alert alert-success" role="alert">
+										<div>Approved</div>
+									</div>
+									<div class="alert alert-danger" role="alert">
+										<a th:href="@{'/admin/deleteFeedback?id=' + ${temp.id}}"
+											onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
+									</div>
+									<div class="alert alert-warning" role="alert">
+										<a th:href="@{'/admin/editFeedback?id=' + ${temp.id}}"
+											onclick="return confirm('Are you sure you want to edit this item?');">Edit</a>
+									</div>
+								</div>
+							</div>
+							<div th:if="${temp.isFeedbackApproved != 'Y'} ">
+								<div class="d-flex justify-content-around">
+									<div class="alert alert-success" role="alert">
+										<!-- Approve entry -->
+										<a th:href="@{'/admin/approveFeedback?id=' + ${temp.id}}">Approve</a>
+									</div>
+									<div class="alert alert-danger" role="alert">
+										<!-- Cancel entry  -->
+										<a th:href="@{'/admin/deleteFeedback?id=' + ${temp.id}}"
+											onclick="return confirm('Are you sure you want to delete this item?');">Delete
+										</a>
+									</div>
+									<div class="alert alert-warning" role="alert">
+										<a th:href="@{'/admin/editFeedback?id=' + ${temp.id}}"
+											onclick="return confirm('Are you sure you want to edit this item?');">Edit</a>
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+		</div>
+	</div>
+</body>
+</html>
+
+
+
