@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/gb.css">
+</head>
+
+<body>
+
+	<div class="container" align="center">
+		<div class="card"
+			style="width: 400px; height: 450px; margin-top: 30px; border: 3px solid #cecece;"
+			align="center">
+			<div class="card-header bg-dark text-white p-3 ">
+				<h2>
+					<b>Edit Feedback </b>
+				</h2>
+			</div>
+			<div class="card-body">
+
+				<form action="#"
+					th:action="@{'/admin/editedFeedback?id=' + ${feedback.id}}"
+					method="POST" enctype="multipart/form-data">
+
+					<div class="form-group">
+						<div class="md-form" align="left">
+							<i class="fas fa-pencil-alt prefix fa-lg "></i> <label
+								for="feebacktext">Please Update Feedback</label>
+							<textarea class="form-control" id="feebacktext"
+								name="feebacktext" maxlength="50" rows="3"
+								th:placeholder="${feedback.feedbackText}" required="required"></textarea>
+						</div>
+						<br> <br>
+						<div class="file-field">
+							<a class="btn-floating peach-gradient mt-0 float-left"> <i
+								class="fas fa-paperclip" aria-hidden="true"></i>
+							</a>
+							<div class="file-path-wrapper">
+								<input type="file" class="file-path validate" accept=".jpg,.png"
+									name="file" id="file" required onchange="validateFileType()"
+									placeholder="Plese Upload File">
+								<div class="text-danger">
+									<h6>(Only .jpg and .png files supported)</h6>
+								</div>
+							</div>
+						</div>
+						<br> <br> <br>
+						<div class="d-flex justify-content-center">
+							<button type="submit" class="btn btn-primary">Submit
+								Feedback</button>
+						</div>
+						<div></div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+
+
+	<script type="text/javascript">
+		function validateFileType() {
+			var fileName = document.getElementById("file").value;
+			var idxDot = fileName.lastIndexOf(".") + 1;
+			var extFile = fileName.substr(idxDot, fileName.length)
+					.toLowerCase();
+			if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
+				alert("Uploading file ");
+			} else {
+				alert("Only jpg/jpeg and png files are allowed!");
+				window.location.href = "/user/addFeedback"
+			}
+		}
+	</script>
+
+
+
+</body>
+
+
+</html>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/guestBooklogin.css">
+</head>
+
+<body>
+
+	<div class="container">
+	<div class="card" >
+		<div class="card" style="margin-top: 30px;">
+			<div class="card-body bg-dark text-white">
+				<h2 class="card-title" align="center">
+					<b>Feedback Entries</b>
+				</h2>
+			</div>
+		</div>
+		<br>
+		<div class="d-flex p-0  text-white">
+			<div class="d-flex justify-content-start" style="margin-left: 10px">
+				<form action="#" th:action="@{/logout}">
+					<button type="submit" class="btn btn-success btn-lg">Go
+						Back</button>
+				</form>
+			</div>
+			<div class="d-flex justify-content-end ml-auto" style="margin-right: 10px">
+				<form action="#" th:action="@{/logout}" method="POST">
+					<button type="submit" class="btn btn-success btn-lg" style=""
+						onclick="if (!(confirm('Do you want to log out?'))) return false">
+						Sign Out</button>
+				</form>
+			</div>
+		</div>
+		<br>
+		<div class="card">
+			<table class="table table-fit table-bordered">
+				<thead class="thead-dark">
+					<tr>
+						<th>#</th>
+						<th>Name</th>
+						<th>Feedback</th>
+						<th>File</th>
+						<th>Date</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="temp : ${feedbackList}">
+						<td th:text="${temp.id}" />
+						<td th:text="${temp.userId}">
+						<td>
+							<div th:if="${temp.isFeedbackApproved == 'Y'}"
+								th:text="${temp.feedbackText}"></div>
+						</td>
+						<td>
+							<div th:if="${temp.isFeedbackApproved == 'Y'}">
+								<a th:href="@{'/getImage?id=' + ${temp.id}}">[[${temp.feedbackImageName}]]</a>
+							</div>
+						</td>
+						<td>
+							<div th:if="${temp.isFeedbackApproved == 'Y'}"
+								th:text="${temp.feedbackTime}"></div>
+						<td>
+							<div th:if="${temp.isFeedbackApproved == 'Y'}">
+								<div>
+									<div>
+										<button type="button" class="btn btn-info">Approved</button>
+									</div>
+								</div>
+							</div>
+							<div th:if="${temp.isFeedbackApproved != 'Y'} ">
+								<div>
+									<div>
+										<button type="button" class="btn btn-warning">Under
+											Review</button>
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		</div>
+	</div>
+</body>
+</html>
+
+
+
