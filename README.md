@@ -1,5 +1,8 @@
 #  Guest Book application using [Spring Boot](http://projects.spring.io/spring-boot/)
 
+## Storyboard
+- Please find `gbStoryboard.docx` in documents/gbStoryboard.docx which has walkthrough of project and screenshots.
+
 ## Prerequisites
 
 - [Git](https://git-scm.com/downloads)
@@ -27,7 +30,4 @@
 
 ### MySQL Configuration
 - Use `spring.datasource.username` and `spring.datasource.password` from `Application.properties` or change them as per to connect to MySQL 
-- Execute the sql script from GuestBookDemo/sql/gbscript.sql
-
-## Storyboard
-- Please find `gbStoryboard` in documents/gbStoryboard.docx which has walkthrough of project and screenshots.
+- Execute the sql script from `GuestBookDemo/sql/gbscript.sql`
