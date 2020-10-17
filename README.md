@@ -1,7 +1,7 @@
 #  Guest Book application using [Spring Boot](http://projects.spring.io/spring-boot/)
 
 ## Storyboard
-- Please find `gbStoryboard.docx` in documents/gbStoryboard.docx which has walkthrough of project and screenshots.
+- Please find `gbStoryboard.docx` in root directory of project `documents/gbStoryboard.docx` which has walkthrough of project and screenshots.
 
 ## Prerequisites
 
