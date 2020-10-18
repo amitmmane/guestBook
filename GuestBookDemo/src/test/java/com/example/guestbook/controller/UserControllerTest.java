@@ -1,4 +1,4 @@
-package com.exapmle.guestbook.controller;
+package com.example.guestbook.controller;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -128,7 +128,7 @@ public class UserControllerTest {
 		doNothing().when(feedbackService).saveFeedback(Mockito.any(Feedback.class));
 
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
-		mockMvc.perform(multipart("/user/submitFeedback").file(file).param("id", "1").param("feebacktext", "a123"))
+		mockMvc.perform(multipart("/user/submitFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
 				.andExpect(model().attribute("message", "Your Feedback Is Pending For Admin Approval"));
 
@@ -145,7 +145,7 @@ public class UserControllerTest {
 		doThrow(NullPointerException.class).when(feedbackService).saveFeedback(Mockito.any(Feedback.class));
 
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
-		mockMvc.perform(multipart("/user/submitFeedback").file(file).param("id", "1").param("feebacktext", "a123"))
+		mockMvc.perform(multipart("/user/submitFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
 				.andExpect(model().attribute("message", "Error While Adding Feedback"));
 

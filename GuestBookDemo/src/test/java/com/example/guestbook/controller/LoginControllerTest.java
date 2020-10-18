@@ -1,4 +1,4 @@
-package com.exapmle.guestbook.controller;
+package com.example.guestbook.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

@@ -1,4 +1,4 @@
-package com.exapmle.guestbook.controller;
+package com.example.guestbook.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
@@ -278,7 +278,7 @@ public class AdminControllerTest {
 		doNothing().when(feedbackService).saveFeedback(f1);
 
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
-		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feebacktext", "a123"))
+		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
 				.andExpect(model().attribute("message", "Feedback Edited Successfully"));
 
@@ -299,7 +299,7 @@ public class AdminControllerTest {
 		Mockito.when(feedbackService.findFeedbackById(Mockito.anyInt())).thenThrow(NullPointerException.class);
 
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
-		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feebacktext", "a123"))
+		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
 				.andExpect(model().attribute("message", "Some problem occured while editing the feedback"));
 
@@ -320,7 +320,7 @@ public class AdminControllerTest {
 		doThrow(NullPointerException.class).when(feedbackService).saveFeedback(f1);
 
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
-		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feebacktext", "a123"))
+		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
 				.andExpect(model().attribute("message", "Some problem occured while editing the feedback"));
 
