@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class SecuredControllerSpringBootIntegrationTest {
+public class SpringSecurityConfigurationTest {
 
 	@Autowired
 	private WebApplicationContext context;
