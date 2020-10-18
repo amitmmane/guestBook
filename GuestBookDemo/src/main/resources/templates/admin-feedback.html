@@ -10,7 +10,7 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="/css/gb.css">
+<link rel="stylesheet" href="/css/gbs.css">
 
 </head>
 <body>
@@ -41,7 +41,8 @@
 		</div>
 		<br>
 		<div class="card">
-			<table class="table table-fit table-bordered">
+		<div class="">
+			<table class="table table-fit table-bordered text-center">
 				<thead class="thead-dark">
 					<tr>
 						<th>#</th>
@@ -60,11 +61,11 @@
 						<td th:text="${temp.feedbackText}" />
 						<td><a th:href="@{'/getFeedbackImage?id=' + ${temp.id}}">[[${temp.feedbackImageName}]]</a></td>
 						<td th:text="${temp.feedbackTime}" />
-						<td>
+						<td style="width: 94px; ">
 							<!-- Check if entry all ready approved -->
 							<div th:if="${temp.isFeedbackApproved == 'Y'}">
 								<div class="d-flex justify-content-around">
-									<div class="alert alert-success" role="alert">
+									<div class="alert alert-info" role="alert">
 										<div>Approved</div>
 									</div>
 									<div class="alert alert-danger" role="alert">
@@ -100,6 +101,7 @@
 				</tbody>
 			</table>
 
+		</div>
 		</div>
 		</div>
 	</div>
