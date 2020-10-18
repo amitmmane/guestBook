@@ -35,7 +35,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.hasRole(GusetbookConstants.ADMIN).antMatchers("/user/**")
 				.hasAnyRole(GusetbookConstants.USER, GusetbookConstants.ADMIN).and().formLogin().loginPage("/login")
 				.loginProcessingUrl("/intialLogin").successHandler(successHandler).permitAll().and().logout()
-				.permitAll().and().exceptionHandling().accessDeniedPage("/invalid");
+				.permitAll().and().exceptionHandling().accessDeniedPage("/403");
 
 				http.headers().defaultsDisabled().cacheControl();
 		
