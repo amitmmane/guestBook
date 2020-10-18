@@ -1,6 +1,6 @@
 #  Guest Book application using [Spring Boot](http://projects.spring.io/spring-boot/)
 
-## Storyboard
+## Storyboard and Test report (Junits- Unit and Integartion Test)
 - Please find `gbStoryboard.docx` in root directory of project `GuestBookDemo/documents/gbStoryboard.docx` which has walkthrough of project and screenshots.
 
 ## Prerequisites
@@ -22,13 +22,14 @@
 - In command prompt execute command ```mvnw clean install -DskipTests``` (As Project contains Integartion tests which requires active DB connection)
 - If MySQL connection is present the use following command ```mvnw clean install -Ddatasource.username={DB_Username} -Ddatasource.pwd={DB_password}```
   Please replace {DB_Username}  and  {DB_password}  with MySQL database credentials
-- jar will get generated on following path `..\GuestBookDemo\target\guestbooktest-0.0.1-SNAPSHOT.jar`
-- Execute follwing command to run the application ```java -jar guestbooktest-0.0.1-SNAPSHOT.jar```
+- jar will get generated on following path `.\target\GuestBookDemo-0.0.1-SNAPSHOT.jar`
+- Execute follwing command to run the application ```java -jar -Ddatasource.username=root -Ddatasource.pwd=admin123 GuestBookDemo-0.0.1-SNAPSHOT.jar```
 - Open browser tab and hit the url `http://localhost:8080.`
 
 ### Running the application in Eclipse
 - Import the project in Eclipse as exisitng maven project
-- Build the project using M2 pugin
+- Build the project using M2 pugin pass the arguments ``-Ddatasource.username={DB_Username}`` and ``-Ddatasource.pwd={DB_password}``
+  Please replace {DB_Username}  and  {DB_password}  with MySQL database credentials
 - Run the Project as Spring Boot Application
 
 ### MySQL Configuration
