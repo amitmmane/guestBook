@@ -20,16 +20,16 @@
 ### Build an executable JAR and run the application
 - Navigate to root directory of project (where POM.xml is present)
 - In command prompt execute command ```mvnw clean install -DskipTests``` (As Project contains Integartion tests which requires active DB connection)
-- If MySQL connection is present the use following command ```mvnw clean install -Ddatasource.username={DB_Username} -Ddatasource.pwd={DB_password}```
+- If MySQL connection is present the use following command ```mvnw clean install -Ddatasource.username={DB_Username} -Ddatasource.pwd={DB_password}```.
   Please replace {DB_Username}  and  {DB_password}  with MySQL database credentials
 - jar will get generated on following path `.\target\GuestBookDemo-0.0.1-SNAPSHOT.jar`
-- Execute follwing command to run the application ```java -jar -Ddatasource.username=root -Ddatasource.pwd=admin123 GuestBookDemo-0.0.1-SNAPSHOT.jar```
+- Execute follwing command to run the application ```java -jar -Ddatasource.username={DB_Username} -Ddatasource.pwd={DB_password} GuestBookDemo-0.0.1-SNAPSHOT.jar```
 - Open browser tab and hit the url `http://localhost:8080.`
 
 ### Running the application in Eclipse
 - Import the project in Eclipse as exisitng maven project
 - Build the project using M2 pugin pass the arguments ``-Ddatasource.username={DB_Username}`` and ``-Ddatasource.pwd={DB_password}``
-  Please replace {DB_Username}  and  {DB_password}  with MySQL database credentials
+  Please replace {DB_Username}  and  {DB_password} with MySQL database credentials
 - Run the Project as Spring Boot Application
 
 ### MySQL Configuration
