@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,7 @@ import com.example.guestbook.helper.GusetbookConstants;
 import com.example.guestbook.service.FeedbackService;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController extends GusetbookConstants {
 
 	@Autowired
@@ -31,7 +33,8 @@ public class AdminController extends GusetbookConstants {
 	
 	Logger logger = LoggerFactory.getLogger(AdminController.class);
 
-	@GetMapping("/admin/welcomeAdmin")
+	/*returns the the welcome screen for the logged in Admin*/
+	@GetMapping("/welcomeAdmin")
 	public String welcome(Model model) {
 
 		logger.info("Entered into AdminController.welcome()");
@@ -40,7 +43,8 @@ public class AdminController extends GusetbookConstants {
 
 	}
 
-	@GetMapping("/admin/viewFeedbackAdmin")
+	/*returns the list of feedbacks for the the logged in Admin*/
+	@GetMapping("/viewFeedbackAdmin")
 	public String viewFeedbackadmin(Model model) {
 		logger.info("Entered into AdminController.viewFeedbackadmin()");
 
@@ -56,7 +60,8 @@ public class AdminController extends GusetbookConstants {
 		return "admin-feedback";
 	}
 
-	@GetMapping("/admin/deleteFeedback")
+	/*Admin can delete the feedback for selected ID*/ 
+	@GetMapping("/deleteFeedback")
 	public String deleteFeedback(@Param("id") int id, Model model) {
 		logger.info("Entered into AdminController.deleteFeedback() with id{}", id);
 
@@ -71,7 +76,8 @@ public class AdminController extends GusetbookConstants {
 		return REDIRECT_ADMIN_FEEDBACK;
 	}
 
-	@GetMapping("/admin/approveFeedback")
+	/*Admin can approve the feedback for selected ID*/ 
+	@GetMapping("/approveFeedback")
 	public String approveFeedback(@Param("id") int id, Model model) {
 		logger.info("Entered into AdminController.approveFeedback() with id{}", id);
 
@@ -93,8 +99,8 @@ public class AdminController extends GusetbookConstants {
 		}
 		return REDIRECT_ADMIN_FEEDBACK;
 	}
-
-	@GetMapping("/admin/editFeedback")
+	/*Admin will be redirected to the edit feedback form*/ 
+	@GetMapping("/editFeedback")
 	public String editFeedback(@Param("id") int id, Model model) {
 		logger.info("Entered into AdminController.editFeedback() with id{}", id);
 
@@ -115,8 +121,9 @@ public class AdminController extends GusetbookConstants {
 		return "edit-feedback";
 	}
 
-	@PostMapping("/admin/editedFeedback")
-	public String editedFeedback(@Param("id") int id, @RequestParam("feebacktext") String feebacktext,
+	/*Admin can edit the feedback for selected ID and submit*/ 
+	@PostMapping("/editedFeedback")
+	public String editedFeedback(@Param("id") int id, @RequestParam("feedbacktext") String feedbacktext,
 			MultipartFile file, Model model) throws Exception {
 		logger.info("Entered into AdminController.editedFeedback() with id{}", id);
 
@@ -128,7 +135,7 @@ public class AdminController extends GusetbookConstants {
 				model.addAttribute(MESSAGE, "Some problem occured while editing the feedback");
 			} else {
 				Feedback feedback = result.get();
-				feedback.setFeedbackText(feebacktext);
+				feedback.setFeedbackText(feedbacktext);
 				feedback.setFeedbackImageName(filname);
 				feedback.setFeedbackImage(file.getBytes());
 				feedback.setFeedbackTime(new Date());
@@ -143,6 +150,7 @@ public class AdminController extends GusetbookConstants {
 		return REDIRECT_ADMIN_FEEDBACK;
 	}
 
+	/*This method returns the logged in user name*/
 	private String getLoggedUseName() {
 		String loggedUser = "";
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
