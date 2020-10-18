@@ -18,6 +18,7 @@ public class LoginController {
 	
 	@GetMapping("/403")
 	public String showAccessDenied() {
+		logger.info("Entered into LoginController.showAccessDenied()");
 		return "403-forbidden";
 	}
 	
