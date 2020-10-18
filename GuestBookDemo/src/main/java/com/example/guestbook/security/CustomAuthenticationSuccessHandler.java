@@ -29,7 +29,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		} else if (roles.contains(("ROLE_USER"))) {
 			redirectStrategy.sendRedirect(request, response, "/user/welcomeUser");
 		} else {
-			redirectStrategy.sendRedirect(request, response, "/access-denied");
+			redirectStrategy.sendRedirect(request, response, "/403");
 		}
 	}
 }
