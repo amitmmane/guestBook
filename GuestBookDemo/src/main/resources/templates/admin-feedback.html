@@ -59,7 +59,7 @@
 						<td th:text="${temp.id}" />
 						<td th:text="${temp.userId}"/>
 						<td th:text="${temp.feedbackText}" />
-						<td><a th:href="@{'/getFeedbackImage?id=' + ${temp.id}}">[[${temp.feedbackImageName}]]</a></td>
+						<td><a th:href="@{'/user/getFeedbackImage?id=' + ${temp.id}}">[[${temp.feedbackImageName}]]</a></td>
 						<td th:text="${temp.feedbackTime}" />
 						<td style="width: 94px; ">
 							<!-- Check if entry all ready approved -->
