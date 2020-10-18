@@ -64,8 +64,8 @@
 						<td style="width: 94px; ">
 							<!-- Check if entry all ready approved -->
 							<div th:if="${temp.isFeedbackApproved == 'Y'}">
-								<div class="d-flex justify-content-around">
-									<div class="alert alert-info" role="alert">
+								<div class="d-flex justify-content-around ">
+									<div class="alert text-success" role="alert">
 										<div>Approved</div>
 									</div>
 									<div class="alert alert-danger" role="alert">
@@ -80,7 +80,7 @@
 							</div>
 							<div th:if="${temp.isFeedbackApproved != 'Y'} ">
 								<div class="d-flex justify-content-around">
-									<div class="alert alert-success" role="alert">
+									<div class="alert alert-info" role="alert">
 										<!-- Approve entry -->
 										<a th:href="@{'/admin/approveFeedback?id=' + ${temp.id}}">Approve</a>
 									</div>
