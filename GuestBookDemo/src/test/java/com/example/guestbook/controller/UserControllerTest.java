@@ -162,7 +162,7 @@ public class UserControllerTest {
 		Optional<Feedback> optional = Optional.of(f1);
 		Mockito.when(feedbackService.findFeedbackById(Mockito.anyInt())).thenReturn(optional);
 
-		mockMvc.perform(get("/getFeedbackImage").param("id", "1")).andExpect(status().is3xxRedirection());
+		mockMvc.perform(get("/user/getFeedbackImage").param("id", "1")).andExpect(status().is3xxRedirection());
 
 		verify(feedbackService, times(1)).findFeedbackById(1);
 	}
@@ -175,7 +175,7 @@ public class UserControllerTest {
 		f1.setId(1);
 		Mockito.when(feedbackService.findFeedbackById(Mockito.anyInt())).thenThrow(NullPointerException.class);
 
-		mockMvc.perform(get("/getFeedbackImage").param("id", "1")).andExpect(status().is3xxRedirection());
+		mockMvc.perform(get("/user/getFeedbackImage").param("id", "1")).andExpect(status().is3xxRedirection());
 
 		verify(feedbackService, times(1)).findFeedbackById(1);
 	}
