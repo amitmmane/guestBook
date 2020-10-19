@@ -1,7 +1,7 @@
 #  Guest Book application using [Spring Boot](http://projects.spring.io/spring-boot/)
 
 ## Storyboard and Test report (Junits- Unit and Integartion Test)
-- Please find `gbStoryboard.docx` in root directory of project `GuestBookDemo/documents/gbStoryboard.docx` which has walkthrough of project and screenshots.
+- Please find story board of the project here [Storyboard](https://github.com/amitmmane/guestBook/blob/master/GuestBookDemo/documents/gbStoryboard.docx) which has walkthrough of project and screenshots and test reports.
 
 ## Prerequisites
 
@@ -34,4 +34,4 @@
 
 ### MySQL Configuration
 - Use `spring.datasource.username` and `spring.datasource.password` from `Application.properties` or change them as per to connect to MySQL 
-- Execute the sql script from `GuestBookDemo/documents/gbscript.sql`
+- Execute the sql script from [MySQL Script](https://github.com/amitmmane/guestBook/blob/master/GuestBookDemo/documents/gbscript.sql).
