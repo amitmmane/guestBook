@@ -3,7 +3,7 @@
 ## Storyboard and Test report (Junits- Unit and Integartion Test)
 - Please find story board of the project here [Storyboard](https://github.com/amitmmane/guestBook/blob/master/GuestBookDemo/documents/gbStoryboard.docx) which has walkthrough of project and screenshots and test reports.
 
-## Prerequisites
+## Prerequisites  
 
 - [Git](https://git-scm.com/downloads)
 - [JDK 1.8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
