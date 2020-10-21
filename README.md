@@ -34,3 +34,6 @@
 ### MySQL Configuration
 - Use `spring.datasource.username` and `spring.datasource.password` from `Application.properties` or change them as per to connect to MySQL 
 - Execute the sql script from [MySQL Script](https://github.com/amitmmane/guestBook/blob/master/GuestBookDemo/documents/gbscript.sql).
+- When script is executed Admin login will get created please use below details to login the application.
+  ``Username  : amitmane@zmail.com``
+  ``Password :  1234``
