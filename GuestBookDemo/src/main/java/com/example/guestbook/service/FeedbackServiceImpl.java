@@ -20,9 +20,10 @@ public class FeedbackServiceImpl implements FeedbackService {
 		feedbackRepo.deleteById(id);
 	}
 
+	
 	@Override
-	public List<Feedback> findFeebackByUserId(String userId)throws Exception {
-		return feedbackRepo.findAllByUserId(userId);
+	public List<Feedback> findFeebackByUserId(String email)throws Exception {
+		return feedbackRepo.findAllByUserId(email);
 	}
 
 	@Override

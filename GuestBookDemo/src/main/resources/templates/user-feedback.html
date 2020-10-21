@@ -37,15 +37,19 @@
 			</div>
 			<div class="d-flex justify-content-end ml-auto" style="margin-right: 10px">
 				<form action="#" th:action="@{/logout}" method="POST">
-					<button type="submit" class="btn btn-success btn-lg" style=""
+					<button type="submit" class="btn btn-success btn-lg" 
 						onclick="if (!(confirm('Do you want to log out?'))) return false">
 						Sign Out</button>
 				</form>
 			</div>
 		</div>
 		<br>
+		<div th:if="${#lists.isEmpty(feedbackList)}">
+		<div class="alert alert-danger" align="center"><h3><b>No Feedbacks to display </b></h3></div>
+		</div>
+		<br>
 		<div class="card">
-			<table class="table table-fit table-bordered">
+			<table class="table table-fit table-bordered text-center">
 				<thead class="thead-dark">
 					<tr>
 						<th>#</th>
@@ -59,26 +63,26 @@
 				<tbody>
 					<tr th:each="temp : ${feedbackList}">
 						<td th:text="${temp.id}" />
-						<td th:text="${temp.userId}"/>
+						<td th:text="${temp.firstName}"/>
 						<td>
-							<div th:if="${temp.isFeedbackApproved == 'Y'}"
+							<div th:if="${temp.feedbackApproved}"
 								th:text="${temp.feedbackText}"></div>
 						</td>
 						<td>
-							<div th:if="${temp.isFeedbackApproved == 'Y'}">
+							<div th:if="${temp.feedbackApproved}">
 								<a th:href="@{'/user/getFeedbackImage?id=' + ${temp.id}}">[[${temp.feedbackImageName}]]</a>
 							</div>
 						</td>
 						<td th:text="${temp.feedbackTime}">
 						<td>
-							<div th:if="${temp.isFeedbackApproved == 'Y'}">
+							<div th:if="${temp.feedbackApproved}">
 								<div>
 									<div>
 										<button type="button" class="btn btn-info">Approved</button>
 									</div>
 								</div>
 							</div>
-							<div th:if="${temp.isFeedbackApproved != 'Y'} ">
+							<div th:unless="${temp.feedbackApproved} ">
 								<div>
 									<div>
 										<button type="button" class="btn btn-warning">Under

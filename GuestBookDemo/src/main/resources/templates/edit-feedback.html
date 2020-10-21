@@ -18,7 +18,7 @@
 
 	<div class="container" align="center">
 		<div class="card"
-			style="width: 400px; height: 450px; margin-top: 30px; border: 3px solid #cecece;"
+			style="width: 400px; margin-top: 30px; border: 3px solid #cecece;"
 			align="center">
 			<div class="card-header bg-dark text-white p-3 ">
 				<h2>
@@ -32,21 +32,38 @@
 					method="POST" enctype="multipart/form-data">
 
 					<div class="form-group">
+					<div th:if="${error!=null}">
+						<div class="alert alert-danger">Please select edit at least one Feedback option </div>
+					</div>
+					<div class="md-form" align="left">
+							 <label for="feedbacktext">Existing Feedback comment</label>
+							<textarea class="form-control" 
+								th:text="${feedback.feedbackText}" readonly="readonly"></textarea>
+						</div>
+						<br>
 						<div class="md-form" align="left">
 							<i class="fas fa-pencil-alt prefix fa-lg "></i> <label
 								for="feedbacktext">Please Update Feedback</label>
 							<textarea class="form-control" id="feedbacktext"
-								name="feedbacktext" maxlength="50" rows="3"
-								th:placeholder="${feedback.feedbackText}" required="required"></textarea>
+								name="feedbacktext" maxlength="50" rows="3"></textarea>
 						</div>
-						<br> <br>
+						<hr>
+						<br>
+						<div class="md-form" align="left" th:if="${feedback.feedbackImageName}">
+								<a  th:href="@{'/user/getFeedbackImage?id=' + ${feedback.id}}">Existing FeedbackImage:[[${feedback.feedbackImageName}]]</a>
+						</div>
+						<div th:unless="${feedback.feedbackImageName}">
+							<div class="alert alert-danger">No Existing Feedback Image present</div>
+						</div>
+						<br>
+						<br>
 						<div class="file-field">
 							<a class="btn-floating peach-gradient mt-0 float-left"> <i
 								class="fas fa-paperclip" aria-hidden="true"></i>
 							</a>
 							<div class="file-path-wrapper">
 								<input type="file" class="file-path validate" accept=".jpg,.png"
-									name="file" id="file" required onchange="validateFileType()"
+									name="file" id="file" onchange="validateFileType()"
 									placeholder="Plese Upload File">
 								<div class="text-danger">
 									<h6>(Only .jpg and .png files supported)</h6>
@@ -54,9 +71,11 @@
 							</div>
 						</div>
 						<br> <br> <br>
-						<div class="d-flex justify-content-center">
-							<button type="submit" class="btn btn-primary">Submit
+						<div class="text-white align-self-center mx-auto">
+							<button type="submit" class="btn btn-success">Submit
 								Feedback</button>
+								<a th:href="@{/admin/viewFeedbackAdmin}" class="btn btn-success text-white">Go
+						Back</a>
 						</div>
 						<div></div>
 					</div>

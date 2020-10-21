@@ -2,70 +2,118 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
-    <link rel="stylesheet" href="/css/gb.css">
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+<link rel="stylesheet" href="/css/gb.css">
 </head>
 
 <body>
 
 	<div class="container" align="center">
-		<div class="card" style="width: 400px; height: 450px; margin-top: 30px; border: 3px solid #cecece;" align="center">
-		<div class="card-header bg-dark text-white p-3 "><h2><b>Feedback Form</b></h2></div>
+		<div class="card"
+			style="width: 400px; margin-top: 30px; border: 3px solid #cecece;"
+			align="center">
+			<div class="card-header bg-dark text-white p-3 ">
+				<h2>
+					<b>Feedback Form</b>
+				</h2>
+			</div>
 			<div class="card-body">
-				<form action="#" th:action="@{/user/submitFeedback}" method="POST" enctype="multipart/form-data">
-					<div class="form-group">
-						<div class="md-form" align="left">
-						<i class="fas fa-pencil-alt prefix fa-lg "></i>
-						 <label for="feedbacktext">Please Enter Your Feedback</label>
-						 <textarea name="feedbacktext" id="feedbacktext" maxlength="50" class="md-textarea form-control" rows="3" placeholder="Please Enter Your Feedback" required autofocus></textarea>
-						 </div>
-						 <br>
-						 <br>
-						 <div class="file-field">
-						  <a class="btn-floating peach-gradient mt-0 float-left">
-     					  <i class="fas fa-paperclip" aria-hidden="true"></i>
-   						 </a>
-   						 <div class="file-path-wrapper">
-						 	<input  type="file" class="file-path validate"  accept=".jpg,.png" name="file" id="file" required onchange="validateFileType()" placeholder="Plese Upload File">
-						 	<div class="text-danger"><h6>(Only .jpg and .png files supported)</h6></div>
-						 	</div>
-						 </div>
-						 <br>
-						 <br>
-						 <br>
-						<div class="d-flex justify-content-center">
-						 <button type="submit" class="btn btn-primary">Submit Feedback</button>
-						 </div>
-						 <div>
-						 </div>
-					 </div>
-				</form>
+				<div class="form-group">
+					<select id='purpose'>
+						<option value="0">Select the Feedback type</option>
+						<option value="1">Text</option>
+						<option value="2">Image</option>
+					</select>
+					<br>
+					<hr>
+					<form action="#" th:action="@{/user/submitFeedback/text}"
+						method="POST">
+						<div class="md-form" align="left" style='display: none;'
+							id='feedbacktext'>
+							<i class="fas fa-pencil-alt prefix fa-lg "></i> <label
+								for="feedbacktext">Please Enter Your Feedback</label>
+							<textarea name="feedbacktext" id="feedbacktext" maxlength="50"
+								class="md-textarea form-control" rows="3"
+								placeholder="Please Enter Your Feedback" required autofocus></textarea>
+								<hr>
+							<div class="d-flex justify-content-center">
+								<button type="submit" class="btn btn-primary">Submit
+									Feedback</button>
+							</div>
+						</div>
+					</form>
+					<br> <br>
+					<form action="#" th:action="@{/user/submitFeedback/image}"
+						method="POST" enctype="multipart/form-data" class="md-form">
+						<div class="file-field" style='display: none;' id='file'>
+							<a class="btn-floating purple-gradient mt-0 float-left"> <i
+								class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
+							</a>
+							<div class="file-path-wrapper">
+								<input type="file" class="file-path validate" accept=".jpg,.png"
+									name="file" id="file" required onchange="validateFileType()"
+									placeholder="Plese Upload File">
+								<div class="text-danger">
+									<h6>(Only .jpg and .png files supported)</h6>
+								</div>
+							</div>
+							<hr>
+							<div class="d-flex justify-content-center">
+								<button type="submit" class="btn btn-primary">Submit
+									Feedback</button>
+							</div>
+						</div>
+					</form>
+					<div></div>
+				</div>
 			</div>
 		</div>
-
 	</div>
-	
-	
+
+	<script
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+		
+	</script>
 	<script type="text/javascript">
-    function validateFileType(){
-        var fileName = document.getElementById("file").value;
-        var idxDot = fileName.lastIndexOf(".") + 1;
-        var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
-        if (extFile=="jpg" || extFile=="jpeg" || extFile=="png"){
-        	alert("Uploading file ");
-        }else{
-            alert("Only jpg/jpeg and png files are allowed!");
-            window.location.href ="/user/addFeedback"
-        }   
-    }
-</script>
-	
+		function validateFileType() {
+			var fileName = document.getElementById("file").value;
+			var idxDot = fileName.lastIndexOf(".") + 1;
+			var extFile = fileName.substr(idxDot, fileName.length)
+					.toLowerCase();
+			if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
+				alert("Uploading file ");
+			} else {
+				alert("Only jpg/jpeg and png files are allowed!");
+				window.location.href = "/user/addFeedback"
+			}
+		};
+
+		$(document).ready(function() {
+			$('#purpose').on('change', function() {
+				if (this.value == '1') {
+					$("#feedbacktext").show();
+				} else {
+					$("#feedbacktext").hide();
+				}
+				if (this.value == '2') {
+					$("#file").show();
+
+				} else {
+					$("#file").hide();
+				}
+			});
+		});
+	</script>
+
 </body>
 
 </html>

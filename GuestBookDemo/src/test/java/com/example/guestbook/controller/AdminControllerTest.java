@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -34,9 +35,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.example.guestbook.controller.AdminController;
 import com.example.guestbook.entity.Feedback;
+import com.example.guestbook.entity.User;
 import com.example.guestbook.service.FeedbackService;
+import com.example.guestbook.service.UserService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdminControllerTest {
@@ -46,6 +48,9 @@ public class AdminControllerTest {
 
 	@Mock
 	FeedbackService feedbackService;
+
+	@Mock
+	UserService userService;
 
 	@Captor
 	ArgumentCaptor<String> stringCaptor;
@@ -70,7 +75,10 @@ public class AdminControllerTest {
 
 	@Test
 	public void testWelcomeAdmin_Sucess() throws Exception {
-
+		
+		User user= new User() ;
+		user.setFirstName("aName");
+		Mockito.when(userService.findByEmail(Mockito.anyString())).thenReturn(user);
 		mockMvc.perform(get("/admin/welcomeAdmin")).andExpect(status().isOk()).andExpect(view().name("welcome-admin"))
 				.andExpect(model().attribute("loggedinUserName", "aName")).andReturn();
 
@@ -284,6 +292,7 @@ public class AdminControllerTest {
 
 		verify(feedbackService, times(1)).saveFeedback(f1);
 	}
+	
 
 	@Test
 	public void testEditedFeedback_Failure() throws Exception {
@@ -326,5 +335,92 @@ public class AdminControllerTest {
 
 		verify(feedbackService, times(1)).saveFeedback(f1);
 	}
+	
+
+	@Test
+	public void testEditedFeedback_Failure2() throws Exception {
+
+		/* When Admin does not modifies any of feedback options 
+		 * he will be redirected to same page */
+		MockMultipartFile file = new MockMultipartFile("file", "", null, "bar".getBytes());
+		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", ""))
+				.andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/editFeedback?error=true&id=1"));
+	}
+	
+	
+	@Test
+	public void testEditedFeedback_Failure3() throws Exception {
+
+		/* When feedbackService.findFeedbackById returns null */
+
+		Optional<Feedback> optional = Optional.empty();
+		Mockito.when(feedbackService.findFeedbackById(1)).thenReturn(optional);
+
+		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
+		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
+				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
+				.andExpect(model().attribute("message", "Some problem occured while editing the feedback"));
+
+	}
+	
+	@Test
+	public void testEditedFeedback_Success1() throws Exception {
+
+		/* When Admin modifies any of feedback text 
+		 * feedback will be successfully modified */
+		MockMultipartFile file = new MockMultipartFile("file", "", null, "bar".getBytes());
+		Feedback f1 = new Feedback();
+		f1.setId(1);
+		Optional<Feedback> optional = Optional.of(f1);
+
+		Mockito.when(feedbackService.findFeedbackById(Mockito.anyInt())).thenReturn(optional);
+		doNothing().when(feedbackService).saveFeedback(f1); 
+		
+		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", "1234"))
+		.andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/viewFeedbackAdmin?message=Feedback+Edited+Successfully"))
+		.andExpect(model().attributeExists("message"))
+		.andExpect(model().attribute("message", "Feedback Edited Successfully"));
+	}
+	
+	
+	@Test
+	public void testEditedFeedback_Success2() throws Exception {
+
+		/* When Admin modifies any of feedback image 
+		 * feedback will be successfully modified */
+		MockMultipartFile file = new MockMultipartFile("file", "origi", null, "bar".getBytes());
+		Feedback f1 = new Feedback();
+		f1.setId(1);
+		Optional<Feedback> optional = Optional.of(f1);
+
+		Mockito.when(feedbackService.findFeedbackById(Mockito.anyInt())).thenReturn(optional);
+		doNothing().when(feedbackService).saveFeedback(f1); 
+		
+		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", ""))
+		.andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/viewFeedbackAdmin?message=Feedback+Edited+Successfully"))
+		.andExpect(model().attributeExists("message"))
+		.andExpect(model().attribute("message", "Feedback Edited Successfully"));
+	}
+	
+	
+	@Test
+	public void testEditedFeedback_Success3() throws Exception {
+
+		/* When Admin modifies any of feedback image and Feedback text
+		 * feedback will be successfully modified */
+		MockMultipartFile file = new MockMultipartFile("file", "origi", null, "bar".getBytes());
+		Feedback f1 = new Feedback();
+		f1.setId(1);
+		Optional<Feedback> optional = Optional.of(f1);
+
+		Mockito.when(feedbackService.findFeedbackById(Mockito.anyInt())).thenReturn(optional);
+		doNothing().when(feedbackService).saveFeedback(f1); 
+		
+		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", "1234"))
+		.andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/viewFeedbackAdmin?message=Feedback+Edited+Successfully"))
+		.andExpect(model().attributeExists("message"))
+		.andExpect(model().attribute("message", "Feedback Edited Successfully"));
+	}
+	
 
 }

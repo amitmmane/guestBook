@@ -14,8 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.example.guestbook.controller.LoginController;
-
 @RunWith(MockitoJUnitRunner.class)
 public class LoginControllerTest {
 

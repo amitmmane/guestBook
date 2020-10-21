@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -33,15 +34,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.example.guestbook.controller.UserController;
 import com.example.guestbook.entity.Feedback;
+import com.example.guestbook.entity.User;
 import com.example.guestbook.service.FeedbackService;
+import com.example.guestbook.service.UserService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest {
 
 	@InjectMocks
 	UserController appController;
+	
+	@Mock
+	UserService userService;
 
 	@Mock
 	FeedbackService feedbackService;
@@ -69,7 +74,10 @@ public class UserControllerTest {
 
 	@Test
 	public void testWelcomeUser_Sucess() throws Exception {
-
+		
+		User user= new User() ;
+		user.setFirstName("aName");
+		Mockito.when(userService.findByEmail(Mockito.anyString())).thenReturn(user);
 		mockMvc.perform(get("/user/welcomeUser")).andExpect(status().isOk()).andExpect(view().name("welcome-user"))
 				.andExpect(model().attribute("loggedinUserName", "aName")).andReturn();
 	}
@@ -86,7 +94,7 @@ public class UserControllerTest {
 		List<Feedback> value = new ArrayList<>();
 		Feedback f1 = new Feedback();
 		f1.setId(1);
-		Mockito.when(feedbackService.findAllFeedbacks()).thenReturn(value);
+		Mockito.when(feedbackService.findFeebackByUserId("aName")).thenReturn(value);
 
 		mockMvc.perform(get("/user/viewFeedbackUser")).andExpect(status().isOk())
 				.andExpect(view().name("user-feedback")).andExpect(model().attribute("loggedinUserName", "aName"))
@@ -99,7 +107,7 @@ public class UserControllerTest {
 		/* When Feedbacks returned null from feedbackService */
 
 		List<Feedback> value = null;
-		Mockito.when(feedbackService.findAllFeedbacks()).thenReturn(value);
+		Mockito.when(feedbackService.findFeebackByUserId("aName")).thenReturn(value);
 
 		mockMvc.perform(get("/user/viewFeedbackUser")).andExpect(status().isOk())
 				.andExpect(view().name("user-feedback")).andExpect(model().attribute("loggedinUserName", "aName"))
@@ -109,7 +117,7 @@ public class UserControllerTest {
 	@Test
 	public void testViewFeedbackUser_Failure() throws Exception {
 		/* When feedbackService throws exception */
-		Mockito.when(feedbackService.findAllFeedbacks()).thenThrow(NullPointerException.class);
+		Mockito.when(feedbackService.findFeebackByUserId("aName")).thenThrow(NullPointerException.class);
 
 		mockMvc.perform(get("/user/viewFeedbackUser")).andExpect(status().isOk())
 				.andExpect(view().name("user-feedback")).andExpect(model().attribute("loggedinUserName", "aName"))
@@ -124,11 +132,33 @@ public class UserControllerTest {
 	@Test
 	public void testSubmitFeedback_Success() throws Exception {
 
-		/* When feedback is added successfully by User */
+		/* When feedback is added successfully by User with option Image */
 		doNothing().when(feedbackService).saveFeedback(Mockito.any(Feedback.class));
+		
+		User user= new User() ;
+		user.setFirstName("Amit");
+		Mockito.when(userService.findByEmail(Mockito.anyString())).thenReturn(user);
 
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
-		mockMvc.perform(multipart("/user/submitFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
+		mockMvc.perform(multipart("/user/submitFeedback/image").file(file).param("id", "1"))
+				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
+				.andExpect(model().attribute("message", "Your Feedback Is Pending For Admin Approval"));
+
+		verify(feedbackService, times(1)).saveFeedback(Mockito.any(Feedback.class));
+	}
+	
+	
+	@Test
+	public void testSubmitFeedback_Success1() throws Exception {
+
+		/* When feedback is added successfully by User with option text */
+		doNothing().when(feedbackService).saveFeedback(Mockito.any(Feedback.class));
+		
+		User user= new User() ;
+		user.setFirstName("Amit");
+		Mockito.when(userService.findByEmail(Mockito.anyString())).thenReturn(user);
+
+		mockMvc.perform(post("/user/submitFeedback/text").param("id", "1").param("feedbacktext", "sample"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
 				.andExpect(model().attribute("message", "Your Feedback Is Pending For Admin Approval"));
 
@@ -143,9 +173,11 @@ public class UserControllerTest {
 		 * feedbackService.saveFeedback()
 		 */
 		doThrow(NullPointerException.class).when(feedbackService).saveFeedback(Mockito.any(Feedback.class));
-
+		User user= new User() ;
+		user.setFirstName("Amit");
+		Mockito.when(userService.findByEmail(Mockito.anyString())).thenReturn(user);
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
-		mockMvc.perform(multipart("/user/submitFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
+		mockMvc.perform(multipart("/user/submitFeedback/image").file(file).param("id", "1"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
 				.andExpect(model().attribute("message", "Error While Adding Feedback"));
 

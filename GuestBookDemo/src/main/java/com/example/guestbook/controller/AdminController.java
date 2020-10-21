@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.guestbook.entity.Feedback;
+import com.example.guestbook.entity.User;
 import com.example.guestbook.helper.GusetbookConstants;
 import com.example.guestbook.service.FeedbackService;
+import com.example.guestbook.service.UserService;
 
 @Controller
 @RequestMapping("/admin")
@@ -31,14 +33,17 @@ public class AdminController extends GusetbookConstants {
 	@Autowired
 	private FeedbackService feedbackService;
 	
+	@Autowired
+	private UserService userService;
+	
 	Logger logger = LoggerFactory.getLogger(AdminController.class);
 
 	/*returns the the welcome screen for the logged in Admin*/
 	@GetMapping("/welcomeAdmin")
 	public String welcome(Model model) {
 
-		logger.info("Entered into AdminController.welcome()");
-		model.addAttribute(LOGGED_IN_USERNAME, getLoggedUseName());
+		User user = userService.findByEmail(getLoggedUserName());
+		model.addAttribute(LOGGED_IN_USERNAME,user.getFirstName());
 		return "welcome-admin";
 
 	}
@@ -56,7 +61,7 @@ public class AdminController extends GusetbookConstants {
 			logger.error("Exception occured in AdminController.viewFeedbackadmin(){}{}", e.getMessage(), e);
 		}
 		model.addAttribute(FEEDBACK_LIST, feedbackList);
-		model.addAttribute(LOGGED_IN_USERNAME, getLoggedUseName());
+		model.addAttribute(LOGGED_IN_USERNAME, getLoggedUserName());
 		return "admin-feedback";
 	}
 
@@ -88,7 +93,7 @@ public class AdminController extends GusetbookConstants {
 				model.addAttribute(MESSAGE, "Some problem occured while approving the feedback");
 			} else {
 				Feedback feedback = result.get();
-				feedback.setIsFeedbackApproved(YES);
+				feedback.setFeedbackApproved(true);
 				feedbackService.saveFeedback(feedback);
 				model.addAttribute(MESSAGE, "Feedback Approved Succeesfully");
 				logger.debug("Approved Feedback successfully for user {}", feedback.getUserId());
@@ -101,10 +106,14 @@ public class AdminController extends GusetbookConstants {
 	}
 	/*Admin will be redirected to the edit feedback form*/ 
 	@GetMapping("/editFeedback")
-	public String editFeedback(@Param("id") int id, Model model) {
+	public String editFeedback(@RequestParam("id") int id,@RequestParam(value = "error" ,required = false) String error, Model model) {
 		logger.info("Entered into AdminController.editFeedback() with id{}", id);
 
 		try {
+			
+			if (!StringUtils.isEmpty(error)) {
+				model.addAttribute("error", "Please edit atleast one option");
+			}
 			Optional<Feedback> result = feedbackService.findFeedbackById(id);
 			if (!result.isPresent()) {
 				logger.info("No feedback obtained for current id{}", id);
@@ -123,23 +132,40 @@ public class AdminController extends GusetbookConstants {
 
 	/*Admin can edit the feedback for selected ID and submit*/ 
 	@PostMapping("/editedFeedback")
-	public String editedFeedback(@Param("id") int id, @RequestParam("feedbacktext") String feedbacktext,
-			MultipartFile file, Model model) throws Exception {
+	public String editedFeedback(@RequestParam("id") int id, @RequestParam(value ="feedbacktext", required=false) String feedbacktext,
+			@RequestParam(value ="file", required=false) MultipartFile file, Model model) throws Exception {
 		logger.info("Entered into AdminController.editedFeedback() with id{}", id);
 
 		try {
+			if (StringUtils.isEmpty(feedbacktext) && StringUtils.isEmpty(file.getOriginalFilename())) {
+				return "redirect:/admin/editFeedback?error=true&id="+id;
+			}
 			String filname = StringUtils.cleanPath(file.getOriginalFilename());
+			
 			Optional<Feedback> result = feedbackService.findFeedbackById(id);
 			if (!result.isPresent()) {
 				logger.info("No feedback obtained for current id{}", id);
 				model.addAttribute(MESSAGE, "Some problem occured while editing the feedback");
 			} else {
 				Feedback feedback = result.get();
-				feedback.setFeedbackText(feedbacktext);
-				feedback.setFeedbackImageName(filname);
-				feedback.setFeedbackImage(file.getBytes());
-				feedback.setFeedbackTime(new Date());
-				feedbackService.saveFeedback(feedback);
+				if(!StringUtils.isEmpty(feedbacktext) && StringUtils.isEmpty(file.getOriginalFilename())) {
+					feedback.setFeedbackText(feedbacktext);
+					feedback.setFeedbackTime(new Date());
+					feedbackService.saveFeedback(feedback);
+				}else if(StringUtils.isEmpty(feedbacktext) && !StringUtils.isEmpty(file.getOriginalFilename())) {
+					feedback.setFeedbackImageName(filname);
+					feedback.setFeedbackImage(file.getBytes());
+					feedback.setFeedbackTime(new Date());
+					feedbackService.saveFeedback(feedback);
+				}else {
+					
+					feedback.setFeedbackText(feedbacktext);
+					feedback.setFeedbackTime(new Date());
+					feedback.setFeedbackImageName(filname);
+					feedback.setFeedbackImage(file.getBytes());
+					feedbackService.saveFeedback(feedback);
+				}
+				
 				logger.debug("Edited Feedback for user {}", feedback.getUserId());
 				model.addAttribute(MESSAGE, "Feedback Edited Successfully");
 			}
@@ -151,7 +177,7 @@ public class AdminController extends GusetbookConstants {
 	}
 
 	/*This method returns the logged in user name*/
-	private String getLoggedUseName() {
+	private String getLoggedUserName() {
 		String loggedUser = "";
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {

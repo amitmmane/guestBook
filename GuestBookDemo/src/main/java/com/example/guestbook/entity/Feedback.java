@@ -25,6 +25,10 @@ public class Feedback {
 	@Column(name="user_id")
 	private String userId;
 	
+	@Column(name="first_name")
+	private String firstName;
+	
+
 	@Column(name="feedback_text")
 	private String feedbackText;
 	
@@ -39,8 +43,17 @@ public class Feedback {
 	@Column(name="feedback_time")
 	private Date feedbackTime;
 	
-	@Column(name="feedback_Approved")
-	private String isFeedbackApproved;
+	@Column(nullable = false, columnDefinition = "BIT", length = 1)
+	private boolean feedbackApproved = false;;
+
+
+	public boolean isFeedbackApproved() {
+		return feedbackApproved;
+	}
+
+	public void setFeedbackApproved(boolean feedbackApproved) {
+		this.feedbackApproved = feedbackApproved;
+	}
 
 	public int getId() {
 		return id;
@@ -90,20 +103,24 @@ public class Feedback {
 		this.feedbackTime = feedbackTime;
 	}
 
-	public String getIsFeedbackApproved() {
-		return isFeedbackApproved;
+	
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setIsFeedbackApproved(String isFeedbackApproved) {
-		this.isFeedbackApproved = isFeedbackApproved;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	@Override
 	public String toString() {
-		return "Feedback [id=" + id + ", userId=" + userId + ", feedbackText=" + feedbackText + ", feedbackImageName="
-				+ feedbackImageName + ", feedbackImage=" + Arrays.toString(feedbackImage) + ", feedbackTime="
-				+ feedbackTime + ", isFeedbackApproved=" + isFeedbackApproved + "]";
+		return "Feedback [id=" + id + ", userId=" + userId + ", firstName=" + firstName + ", feedbackText="
+				+ feedbackText + ", feedbackImageName=" + feedbackImageName + ", feedbackImage="
+				+ Arrays.toString(feedbackImage) + ", feedbackTime=" + feedbackTime + ", feedbackApproved="
+				+ feedbackApproved + "]";
 	}
+
+
 	
 	
 	

@@ -33,11 +33,15 @@
 			</div>
 			<div class="d-flex justify-content-end ml-auto" style="margin-right: 10px">
 				<form action="#" th:action="@{/logout}" method="POST">
-					<button type="submit" class="btn btn-success btn-lg" style=""
+					<button type="submit" class="btn btn-success btn-lg" 
 						onclick="if (!(confirm('Do you want to log out?'))) return false">
 						Sign Out</button>
 				</form>
 			</div>
+		</div>
+		<br>
+		<div th:if="${#lists.isEmpty(feedbackList)}">
+		<div class="alert alert-danger" align="center"><h3><b>No Feedbacks to display </b></h3></div>
 		</div>
 		<br>
 		<div class="card">
@@ -57,13 +61,13 @@
 				<tbody>
 					<tr th:each="temp : ${feedbackList}">
 						<td th:text="${temp.id}" />
-						<td th:text="${temp.userId}"/>
+						<td th:text="${temp.firstName}"/>
 						<td th:text="${temp.feedbackText}" />
 						<td><a th:href="@{'/user/getFeedbackImage?id=' + ${temp.id}}">[[${temp.feedbackImageName}]]</a></td>
 						<td th:text="${temp.feedbackTime}" />
 						<td style="width: 94px; ">
 							<!-- Check if entry all ready approved -->
-							<div th:if="${temp.isFeedbackApproved == 'Y'}">
+							<div th:if="${temp.feedbackApproved}">
 								<div class="d-flex justify-content-around ">
 									<div class="alert text-success" role="alert">
 										<div>Approved</div>
@@ -78,7 +82,7 @@
 									</div>
 								</div>
 							</div>
-							<div th:if="${temp.isFeedbackApproved != 'Y'} ">
+							<div th:unless="${temp.feedbackApproved} ">
 								<div class="d-flex justify-content-around">
 									<div class="alert alert-info" role="alert">
 										<!-- Approve entry -->

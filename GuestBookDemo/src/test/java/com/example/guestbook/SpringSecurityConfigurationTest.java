@@ -38,17 +38,6 @@ public class SpringSecurityConfigurationTest {
 				.apply(springSecurity()).build();
 	}
 
-	@Test
-	@WithMockUser(username = "Amit", roles = { "ADMIN" })
-
-	/*
-	 * When person with ADMIN role tries to access the /admin/** uri/  He is 
-	 * allowed to access
-	 */
-
-	public void givenAuthRequestOnPrivateService_shouldSucceedWith200() throws Exception {
-		mvc.perform(get("/admin/welcomeAdmin").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
-	}
 
 	@Test
 	@WithMockUser(username = "Komal", roles = { "USER" })
@@ -63,17 +52,6 @@ public class SpringSecurityConfigurationTest {
 				.andExpect(status().isForbidden());
 	}
 
-	@Test
-	@WithMockUser(username = "Amit", roles = { "ADMIN" })
-
-	/*
-	 * When person with ADMIN role tries to access the /user/** uri/ He is
-	 * allowed to access
-	 */
-
-	public void givenAuthRequestOnPrivateService_shouldSuccees_200() throws Exception {
-		mvc.perform(get("/user/welcomeUser").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
-	}
 
 	@Test
 	@WithMockUser(username = "Amit", roles = { "NA" })

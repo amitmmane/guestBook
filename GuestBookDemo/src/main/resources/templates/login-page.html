@@ -12,32 +12,43 @@
 </head>
 <div class="container" align="center">
 	<div class="card"
-		style="width: 400px; height: 460px; margin-top: 30px; border: 3px solid #cecece;"
+		style="width: 400px; margin-top: 30px; border: 3px solid #cecece;"
 		align="center">
 		<div class="card-header bg-dark text-white ">
 			<div class="panel-title">
 				<h3>
-					<b>Sign In</b>
+					<b>Guest Book Sign in</b>
 				</h3>
 			</div>
 		</div>
+		<div th:if="${param.success}">
+					<div class="alert alert-info">You've successfully registered
+						to our awesome app!</div>
+				</div>
+				<br>
+				<br>
 		<fieldset>
 			<form th:action="@{/intialLogin}" method="post">
-				<div class="form-group  col-xl-10 " style="margin-top: 30px"
+				<div class="form-group  col-xl-10 " 
 					align="left">
 					<label><b>User Name</b></label> <input type="text"
 						class="form-control input-lg" id="username" name="username"
 						required autofocus>
 				</div>
 
-				<div class="form-group  col-xl-10 " style="margin-top: 40px"
+				<div class="form-group  col-xl-10 "
 					align="left">
 					<label><b> Password</b></label> <input type="password"
 						class="form-control input-lg" id="password" name="password"
 						required="required">
 				</div>
-				<div style="margin-top: 40px">
+				<div>
 					<button type="submit" class="btn btn-success col-xl-4">Login</button>
+				</div>
+				<br>
+				<div class="form-group">
+						<span>New user? <a href="/" th:href="@{/registration}">Register
+								here</a></span>
 				</div>
 				<br> <br>
 				<div th:if="${param.error}">

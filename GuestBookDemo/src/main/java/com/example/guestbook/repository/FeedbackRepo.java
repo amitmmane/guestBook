@@ -10,6 +10,7 @@ import com.example.guestbook.entity.Feedback;
 @Repository
 public interface FeedbackRepo extends JpaRepository<Feedback, Integer> {
 	
-	public List<Feedback> findAllByUserId(String userId)throws Exception;
+	public List<Feedback> findAllByUserId(String email)throws Exception;
+	
 	
 }
