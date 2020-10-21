@@ -1,48 +1,37 @@
-DROP DATABASE  IF EXISTS `guestbook`;
-CREATE DATABASE  IF NOT EXISTS `guestbook`;
-USE `guestbook`;
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `username` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
-  `enabled` tinyint(1) NOT NULL,
-  PRIMARY KEY (`username`)
-) ;
-INSERT INTO `users` 
-VALUES 
-('Amit','{noop}root',1),
-('Prashant','{noop}root',1),
-('Rohan','{noop}root',1),
-('Pravin','{noop}root',1),
-('Pushkar','{noop}root',1),
-('Omkar','{noop}root',1);
+DROP DATABASE  IF EXISTS `gbdatabase`;
+CREATE DATABASE  IF NOT EXISTS `gbdatabase`;
+use gbdatabase;
 
-DROP TABLE IF EXISTS `authorities`;
-CREATE TABLE `authorities` (
-  `username` varchar(50) NOT NULL,
-  `authority` varchar(50) NOT NULL,
-  UNIQUE KEY `authorities_idx_1` (`username`,`authority`),
-  CONSTRAINT `authorities_ibfk_1` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
-) ;
-
-INSERT INTO `authorities` 
-VALUES 
-('Amit','ROLE_ADMIN'),
-('Prashant','ROLE_USER'),
-('Rohan','ROLE_DENY'),
-('Pravin','ROLE_USER'),
-('Pushkar','ROLE_USER'),
-('Omkar','ROLE_USER');
-
-
-DROP TABLE IF EXISTS `feedbackdetails`;
-CREATE TABLE `feedbackdetails` (
-  `id` int(10)  NOT NULL AUTO_INCREMENT,
-  `user_id` varchar(50) NULL,
-  `feedback_text` varchar(100)  NULL,
-  `feedback_image` longblob  NULL,
-  `feedback_image_name` varchar(100)  NULL,
-  `feedback_time` DateTime  NULL,
-  `feedback_Approved` varchar(2) NULL,
+DROP table if exists gbdatabase.role;
+CREATE TABLE `role` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP table if exists gbdatabase.user;
+CREATE TABLE `user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) DEFAULT NULL,
+  `firstName` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UKob8kqyqqgmefl0aco34akdtpe` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP table if exists gbdatabase.user_role;
+CREATE TABLE `user_role` (
+  `user_id` bigint(20) NOT NULL,
+  `role_id` bigint(20) NOT NULL,
+  KEY `FKt4v0rrweyk393bdgt107vdx0x` (`role_id`),
+  KEY `FKgd3iendaoyh04b95ykqise6qh` (`user_id`),
+  CONSTRAINT `FKgd3iendaoyh04b95ykqise6qh` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FKt4v0rrweyk393bdgt107vdx0x` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP table if exists gbdatabase.feedbackdetails;
+
+Insert INTO gbdatabase.user (id,first_name,last_name,email,password)  VALUES  (100,'Amit','Mane','amitmane@zmail.com','$2a$10$2obMD6R4iwoUGyv/TDRqJOcZLUhXppyPWi5XH58PqXGMFW3ZvxQRa');
+insert into gbdatabase.role (id ,name) values (100,'ROLE_ADMIN');
+insert into gbdatabase.user_role values (100,100);
