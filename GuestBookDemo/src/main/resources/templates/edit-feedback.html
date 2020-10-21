@@ -50,7 +50,7 @@
 						<hr>
 						<br>
 						<div class="md-form" align="left" th:if="${feedback.feedbackImageName}">
-								<a  th:href="@{'/user/getFeedbackImage?id=' + ${feedback.id}}">Existing FeedbackImage:[[${feedback.feedbackImageName}]]</a>
+								<a  th:href="@{'/user/getFeedbackImage?id=' + ${feedback.id}}"><b>Existing Feedback Image:</b>[[${feedback.feedbackImageName}]]</a>
 						</div>
 						<div th:unless="${feedback.feedbackImageName}">
 							<div class="alert alert-danger">No Existing Feedback Image present</div>
