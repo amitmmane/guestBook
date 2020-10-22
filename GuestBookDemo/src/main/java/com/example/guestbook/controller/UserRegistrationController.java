@@ -1,8 +1,9 @@
 package com.example.guestbook.controller;
 
-
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,42 +16,53 @@ import com.example.guestbook.entity.User;
 import com.example.guestbook.helper.UserRegistrationDto;
 import com.example.guestbook.service.UserService;
 
-
-
 @Controller
 @RequestMapping("/registration")
 public class UserRegistrationController {
-   
+
+	Logger logger = LoggerFactory.getLogger(UserRegistrationController.class);
+
 	@Autowired
 	private UserService userService;
 
-	
 	@ModelAttribute("user")
-    public UserRegistrationDto userRegistrationDto() {
-        return new UserRegistrationDto();
-    }
-	
+	public UserRegistrationDto userRegistrationDto() {
+		return new UserRegistrationDto();
+	}
+
+	/* Display the registration-form to user */
 	@GetMapping
 	public String showRegistrationForm() {
+		
+		logger.info("Entered into registerUserAccount.showRegistrationForm()");
 		return "registration-form";
 	}
 	
+
+	/* returns the new registered user upon validating the user details */
 	@PostMapping
-	public String registerUserAccount(@ModelAttribute("user") @Valid UserRegistrationDto registrationDto,BindingResult bindingResult) {
-		 User existing = userService.findByEmail(registrationDto.getEmail());
-	        if (existing != null){
-	        	bindingResult.rejectValue("email", null, "There is already an account registered with that email");
-	        }
+	public String registerUserAccount(@ModelAttribute("user") @Valid UserRegistrationDto registrationDto,
+			BindingResult bindingResult) {
 
-	        if (bindingResult.hasErrors()){
-	            return "registration-form";
-	        }
-
-	        try {
-				userService.save(registrationDto);
-			} catch (Exception e) {
-				return "redirect:/registration?error";
+		logger.info("Entered into registerUserAccount.registerUserAccount() with User as{}", registrationDto);
+		try {
+			
+			User existing = userService.findByEmail(registrationDto.getEmail());
+			if (existing != null) {
+				bindingResult.rejectValue("email", null, "There is already an account registered with that email");
+				logger.debug("User already exisits with email {}", existing.getEmail());
 			}
-	        return "redirect:/login?success";
+
+			if (bindingResult.hasErrors()) {
+				logger.debug("Some errors occured while validating the user details{}", bindingResult.getAllErrors().toString());
+				return "registration-form";
+				
+			}
+			userService.save(registrationDto);
+		} catch (Exception e) {
+			logger.error("Some exception occured  while registerUserAccount.registerUserAccount() {}",e.getMessage(), e );
+			return "redirect:/registration?error";
+		}
+		return "redirect:/login?success";
 	}
 }
