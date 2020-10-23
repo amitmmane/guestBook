@@ -30,7 +30,10 @@ public class UserRegistrationController {
 		return new UserRegistrationDto();
 	}
 
-	/* Display the registration-form to user */
+	/**
+	 * Display the registration-form to user
+	 * @return
+	 */
 	@GetMapping
 	public String showRegistrationForm() {
 		
@@ -39,7 +42,12 @@ public class UserRegistrationController {
 	}
 	
 
-	/* returns the new registered user upon validating the user details */
+	/**
+	 * returns the new registered user upon validating the user details
+	 * @param registrationDto
+	 * @param bindingResult
+	 * @return
+	 */
 	@PostMapping
 	public String registerUserAccount(@ModelAttribute("user") @Valid UserRegistrationDto registrationDto,
 			BindingResult bindingResult) {

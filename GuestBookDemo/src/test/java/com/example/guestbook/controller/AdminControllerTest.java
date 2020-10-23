@@ -32,6 +32,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -71,6 +72,11 @@ public class AdminControllerTest {
 
 		MockitoAnnotations.initMocks(this);
 		this.mockMvc = MockMvcBuilders.standaloneSetup(appController).build();
+		
+		ReflectionTestUtils.setField(appController, "errorMessage", "Some error occurred please try again");
+		ReflectionTestUtils.setField(appController, "adminFeedbackDelete", "Feedback Has Been Deleted Successfully");
+		ReflectionTestUtils.setField(appController, "adminFeedbackEdit", "Feedback Edited Successfully");
+		ReflectionTestUtils.setField(appController, "adminFeedbackApprove", "Feedback Approved Successfully");
 	}
 
 	@Test
@@ -158,7 +164,7 @@ public class AdminControllerTest {
 		mockMvc.perform(get("/admin/deleteFeedback").param("id", "1")).andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/admin/viewFeedbackAdmin"))
 				.andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Some Problem Occured while deleting the Feedback"))
+				.andExpect(model().attribute("message", "Some error occurred please try again"))
 				.andReturn();
 
 		verify(feedbackService, times(1)).deleteFeedbackById(1);
@@ -181,7 +187,7 @@ public class AdminControllerTest {
 		mockMvc.perform(get("/admin/approveFeedback").param("id", "1")).andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/admin/viewFeedbackAdmin"))
 				.andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Feedback Approved Succeesfully")).andReturn();
+				.andExpect(model().attribute("message", "Feedback Approved Successfully")).andReturn();
 
 		verify(feedbackService, times(1)).findFeedbackById(1);
 		verify(feedbackService, times(1)).saveFeedback(f1);
@@ -202,7 +208,7 @@ public class AdminControllerTest {
 		mockMvc.perform(get("/admin/approveFeedback").param("id", "1")).andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/admin/viewFeedbackAdmin"))
 				.andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Some problem occured while approving the feedback"))
+				.andExpect(model().attribute("message", "Some error occurred please try again"))
 				.andReturn();
 
 		verify(feedbackService, times(1)).findFeedbackById(1);
@@ -221,7 +227,7 @@ public class AdminControllerTest {
 		mockMvc.perform(get("/admin/approveFeedback").param("id", "1")).andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/admin/viewFeedbackAdmin"))
 				.andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Some problem occured while approving the feedback"))
+				.andExpect(model().attribute("message", "Some error occurred please try again"))
 				.andReturn();
 
 		/* Assert */
@@ -310,7 +316,7 @@ public class AdminControllerTest {
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Some problem occured while editing the feedback"));
+				.andExpect(model().attribute("message", "Some error occurred please try again"));
 
 	}
 
@@ -331,7 +337,7 @@ public class AdminControllerTest {
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Some problem occured while editing the feedback"));
+				.andExpect(model().attribute("message", "Some error occurred please try again"));
 
 		verify(feedbackService, times(1)).saveFeedback(f1);
 	}
@@ -359,7 +365,7 @@ public class AdminControllerTest {
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 		mockMvc.perform(multipart("/admin/editedFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Some problem occured while editing the feedback"));
+				.andExpect(model().attribute("message", "Some error occurred please try again"));
 
 	}
 	

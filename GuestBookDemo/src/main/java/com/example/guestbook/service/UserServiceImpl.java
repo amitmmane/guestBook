@@ -30,7 +30,10 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	/* save the details of user to database */
+	
+	/**
+	 *Save the details of user to database 
+	 */
 	@Override
 	public User save(UserRegistrationDto registrationDto) {
 
@@ -40,7 +43,10 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 
-	/* Check for existing use and validate */
+	/**
+	 *Check for existing use and validate
+	 *
+	 * */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 

@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +32,7 @@ import com.example.guestbook.helper.GusetbookConstants;
 import com.example.guestbook.service.FeedbackService;
 import com.example.guestbook.service.UserService;
 
+@PropertySource(value ="classpath:message.properties")
 @Controller
 @RequestMapping("/user")
 public class UserController extends GusetbookConstants {
@@ -39,10 +42,22 @@ public class UserController extends GusetbookConstants {
 	
 	@Autowired
 	private UserService userService;
+	
+	 @Value("${error.message}")
+	 private String errorMessage;
+	 
+	 @Value("${user.feedback.pending}")
+	 private String userFeebackPending;
+	 
+	 
 
 	Logger logger = LoggerFactory.getLogger(UserController.class);
 
-	/*returns the the welcome screen for the logged in user*/
+	/**
+	 * Returns the the welcome screen for the logged in user
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/welcomeUser")
 	public String welcomeUser(Model model) {
 		logger.info("Entered into UserController.welcome()");
@@ -52,7 +67,11 @@ public class UserController extends GusetbookConstants {
 		return "welcome-user";
 	}
 
-	/*returns the list of feedbacks for the the logged in user*/
+	/**
+	 * Returns the list of feedbacks for the the logged in user
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/viewFeedbackUser")
 	public String viewFeedbackUser(Model model) {
 		logger.info("Entered into UserController.viewFeedbackUser()");
@@ -69,16 +88,25 @@ public class UserController extends GusetbookConstants {
 		return "user-feedback";
 	}
 
-	/*Directs user to feedback form for logged in user*/
+	
+	/**
+	 * Directs user to feedback form for logged in user
+	 * @return
+	 */
 	@GetMapping("/addFeedback")
 	public String addFeedback() {
 		logger.info("Entered into UserController.addFeedback()");
 		return "feedback-form";
 	}
 
-	/*Adds the new feedback for logged in user*/
+	/**
+	 * Adds the new feedback image for logged in user
+	 * @param feedbackImage
+	 * @param model
+	 * @return
+	 */
 	@PostMapping("/submitFeedback/image")
-	public String submitFeedbackImage(@RequestParam("file" ) MultipartFile feedbackImage, Model model) throws IOException {
+	public String submitFeedbackImage(@RequestParam("file" ) MultipartFile feedbackImage, Model model) {
 		logger.info("Entered into UserController.submitFeedback()");
 
 		try {
@@ -92,16 +120,23 @@ public class UserController extends GusetbookConstants {
 			feedback.setFeedbackTime(new Date());
 			feedback.setFirstName(user.getFirstName());
 			feedbackService.saveFeedback(feedback);
-			model.addAttribute(MESSAGE, "Your Feedback Is Pending For Admin Approval");
+			model.addAttribute(MESSAGE, userFeebackPending);
 			logger.debug("Feedback Added Successfully for user{}", feedback.getUserId());
 		} catch (Exception e) {
 			logger.error("Exception occured in UserController.submitFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE, "Error While Adding Feedback");
+			model.addAttribute(MESSAGE, errorMessage);
 		}
 		return "redirect:/user/viewFeedbackUser";
 	}
 	
 	
+	/**
+	 * Adds the new feedback image for logged in user
+	 * @param feedbacktext
+	 * @param model
+	 * @return
+	 * @throws IOException
+	 */
 	@PostMapping("/submitFeedback/text")
 	public String submitFeedbacktext(@RequestParam("feedbacktext") String feedbacktext, Model model) throws IOException {
 		logger.info("Entered into UserController.submitFeedback()");
@@ -114,16 +149,23 @@ public class UserController extends GusetbookConstants {
 			feedback.setFeedbackTime(new Date());
 			feedback.setFirstName(user.getFirstName());
 			feedbackService.saveFeedback(feedback);
-			model.addAttribute(MESSAGE, "Your Feedback Is Pending For Admin Approval");
+			model.addAttribute(MESSAGE, userFeebackPending);
 			logger.debug("Feedback Added Successfully for user{}", feedback.getUserId());
 		} catch (Exception e) {
 			logger.error("Exception occured in UserController.submitFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE, "Error While Adding Feedback");
+			model.addAttribute(MESSAGE, errorMessage);
 		}
 		return "redirect:/user/viewFeedbackUser";
 	}
 
-	/*to get feedback image from db to browser*/
+	
+	/**
+	 * To get feedback image from db to browser
+	 * @param id
+	 * @param response
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/getFeedbackImage")
 	public String getFeedbackImage(@Param("id") int id, HttpServletResponse response, Model model) {
 		logger.info("Entered into UserController.getFeedbackImage() for id{}", id);
@@ -132,7 +174,7 @@ public class UserController extends GusetbookConstants {
 			Optional<Feedback> result = feedbackService.findFeedbackById(id);
 			if (!result.isPresent()) {
 				logger.info("No feedback obtained from current id{}", id);
-				model.addAttribute(MESSAGE,"Some Error occured");
+				model.addAttribute(MESSAGE,errorMessage);
 			} else {
 				Feedback userInformation = result.get();
 				response.setContentType("APPLICATION/OCTET-STREAM");
@@ -144,12 +186,15 @@ public class UserController extends GusetbookConstants {
 			}
 		} catch (Exception e) {
 			logger.error("Exception occured in UserController.getFeedbackImage(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE,"Some Error occured");
+			model.addAttribute(MESSAGE,errorMessage);
 		}
 		return "redirect:/user/viewFeedbackUser";
 	}
 
-	/*This method returns the logged in user name*/
+	/**
+	 * This method returns the logged in user name
+	 * @return
+	 */
 	private String getLoggedUserName() {
 		String loggedUser = "";
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

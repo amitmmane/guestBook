@@ -31,6 +31,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -70,6 +71,9 @@ public class UserControllerTest {
 
 		MockitoAnnotations.initMocks(this);
 		this.mockMvc = MockMvcBuilders.standaloneSetup(appController).build();
+		
+		ReflectionTestUtils.setField(appController, "errorMessage", "Some error occurred please try again");
+		ReflectionTestUtils.setField(appController, "userFeebackPending", "Your Feedback Is Pending For Admin Approval");
 	}
 
 	@Test
@@ -179,7 +183,7 @@ public class UserControllerTest {
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 		mockMvc.perform(multipart("/user/submitFeedback/image").file(file).param("id", "1"))
 				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Error While Adding Feedback"));
+				.andExpect(model().attribute("message", "Some error occurred please try again"));
 
 		verify(feedbackService, times(1)).saveFeedback(Mockito.any(Feedback.class));
 	}

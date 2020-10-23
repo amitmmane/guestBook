@@ -83,24 +83,9 @@
 		</div>
 	</div>
 
-	<script
-		src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
-		
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
 	</script>
-	<script type="text/javascript">
-		function validateFileType() {
-			var fileName = document.getElementById("file").value;
-			var idxDot = fileName.lastIndexOf(".") + 1;
-			var extFile = fileName.substr(idxDot, fileName.length)
-					.toLowerCase();
-			if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
-				alert("Uploading file ");
-			} else {
-				alert("Only jpg/jpeg and png files are allowed!");
-				window.location.href = "/user/addFeedback"
-			}
-		};
-
+	<script >
 		$(document).ready(function() {
 			$('#purpose').on('change', function() {
 				if (this.value == '1') {
@@ -117,17 +102,5 @@
 			});
 		});
 	</script>
-
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-

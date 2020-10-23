@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,7 +30,8 @@ import com.example.guestbook.service.UserService;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminController extends GusetbookConstants {
+@PropertySource(value ="classpath:message.properties")
+public class AdminController{
 
 	@Autowired
 	private FeedbackService feedbackService;
@@ -36,19 +39,40 @@ public class AdminController extends GusetbookConstants {
 	@Autowired
 	private UserService userService;
 	
+	@Value("${error.message}")
+	private String errorMessage;
+	
+	@Value("${admin.feedback.delete}")
+	private String adminFeedbackDelete;
+	
+	@Value("${admin.feedback.edit}")
+	private String adminFeedbackEdit;
+	
+	@Value("${admin.feedback.approve}")
+	private String adminFeedbackApprove;
+	
+	
 	Logger logger = LoggerFactory.getLogger(AdminController.class);
 
-	/*returns the the welcome screen for the logged in Admin*/
+	
+	/**Returns the the welcome screen for the logged in admin
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/welcomeAdmin")
 	public String welcome(Model model) {
-
 		User user = userService.findByEmail(getLoggedUserName());
-		model.addAttribute(LOGGED_IN_USERNAME,user.getFirstName());
+		model.addAttribute(GusetbookConstants.LOGGED_IN_USERNAME,user.getFirstName());
 		return "welcome-admin";
 
 	}
 
-	/*returns the list of feedbacks for the the logged in Admin*/
+	
+	/**
+	 * Returns the list of feedbacks for the the logged in Admin
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/viewFeedbackAdmin")
 	public String viewFeedbackadmin(Model model) {
 		logger.info("Entered into AdminController.viewFeedbackadmin()");
@@ -60,12 +84,18 @@ public class AdminController extends GusetbookConstants {
 		} catch (Exception e) {
 			logger.error("Exception occured in AdminController.viewFeedbackadmin(){}{}", e.getMessage(), e);
 		}
-		model.addAttribute(FEEDBACK_LIST, feedbackList);
-		model.addAttribute(LOGGED_IN_USERNAME, getLoggedUserName());
+		model.addAttribute(GusetbookConstants.FEEDBACK_LIST, feedbackList);
+		model.addAttribute(GusetbookConstants.LOGGED_IN_USERNAME, getLoggedUserName());
 		return "admin-feedback";
 	}
 
-	/*Admin can delete the feedback for selected ID*/ 
+	
+	/**
+	 * Admin can delete the feedback for selected ID
+	 * @param id
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/deleteFeedback")
 	public String deleteFeedback(@Param("id") int id, Model model) {
 		logger.info("Entered into AdminController.deleteFeedback() with id{}", id);
@@ -73,15 +103,21 @@ public class AdminController extends GusetbookConstants {
 		try {
 			feedbackService.deleteFeedbackById(id);
 			logger.info("Deleted successfully Feedback with id {}", id);
-			model.addAttribute(MESSAGE, "Feedback Has Been Deleted Successfully");
+			model.addAttribute(GusetbookConstants.MESSAGE,adminFeedbackDelete);
 		} catch (Exception e) {
 			logger.error("Exception occured in AdminController.deleteFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE, "Some Problem Occured while deleting the Feedback");
+			model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
 		}
-		return REDIRECT_ADMIN_FEEDBACK;
+		return GusetbookConstants.REDIRECT_ADMIN_FEEDBACK;
 	}
 
-	/*Admin can approve the feedback for selected ID*/ 
+	
+	/**
+	 * Admin can approve the feedback for selected ID
+	 * @param id
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/approveFeedback")
 	public String approveFeedback(@Param("id") int id, Model model) {
 		logger.info("Entered into AdminController.approveFeedback() with id{}", id);
@@ -90,21 +126,28 @@ public class AdminController extends GusetbookConstants {
 			Optional<Feedback> result = feedbackService.findFeedbackById(id);
 			if (!result.isPresent()) {
 				logger.info("No feedback obtained from current id{}", id);
-				model.addAttribute(MESSAGE, "Some problem occured while approving the feedback");
+				model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
 			} else {
 				Feedback feedback = result.get();
 				feedback.setFeedbackApproved(true);
 				feedbackService.saveFeedback(feedback);
-				model.addAttribute(MESSAGE, "Feedback Approved Succeesfully");
+				model.addAttribute(GusetbookConstants.
+						MESSAGE,adminFeedbackApprove);
 				logger.debug("Approved Feedback successfully for user {}", feedback.getUserId());
 			}
 		} catch (Exception e) {
 			logger.error("Exception occured in AdminController.approveFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE, "Some problem occured while approving the feedback");
+			model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
 		}
-		return REDIRECT_ADMIN_FEEDBACK;
+		return GusetbookConstants.REDIRECT_ADMIN_FEEDBACK;
 	}
-	/*Admin will be redirected to the edit feedback form*/ 
+	
+	/**Admin will be redirected to the edit feedback form
+	 * @param id
+	 * @param error
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/editFeedback")
 	public String editFeedback(@RequestParam("id") int id,@RequestParam(value = "error" ,required = false) String error, Model model) {
 		logger.info("Entered into AdminController.editFeedback() with id{}", id);
@@ -117,20 +160,29 @@ public class AdminController extends GusetbookConstants {
 			Optional<Feedback> result = feedbackService.findFeedbackById(id);
 			if (!result.isPresent()) {
 				logger.info("No feedback obtained for current id{}", id);
-				model.addAttribute(MESSAGE, "Some problem occured");
+				model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
 			} else {
 				Feedback feedback = result.get();
-				model.addAttribute(FEEDBACK, feedback);
+				model.addAttribute(GusetbookConstants.FEEDBACK, feedback);
 				logger.debug("Edit Feedback  for user {}", feedback.getUserId());
 			}
 		} catch (Exception e) {
 			logger.error("Exception occured in AdminController.editFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE, "Some problem occured");
+			model.addAttribute(GusetbookConstants.MESSAGE, "Some problem occured");
 		}
 		return "edit-feedback";
 	}
 
-	/*Admin can edit the feedback for selected ID and submit*/ 
+	
+	/**
+	 * Admin can edit the feedback for selected ID and submit
+	 * @param id
+	 * @param feedbacktext
+	 * @param file
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
 	@PostMapping("/editedFeedback")
 	public String editedFeedback(@RequestParam("id") int id, @RequestParam(value ="feedbacktext", required=false) String feedbacktext,
 			@RequestParam(value ="file", required=false) MultipartFile file, Model model) throws Exception {
@@ -145,7 +197,7 @@ public class AdminController extends GusetbookConstants {
 			Optional<Feedback> result = feedbackService.findFeedbackById(id);
 			if (!result.isPresent()) {
 				logger.info("No feedback obtained for current id{}", id);
-				model.addAttribute(MESSAGE, "Some problem occured while editing the feedback");
+				model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
 			} else {
 				Feedback feedback = result.get();
 				if(!StringUtils.isEmpty(feedbacktext) && StringUtils.isEmpty(file.getOriginalFilename())) {
@@ -167,16 +219,20 @@ public class AdminController extends GusetbookConstants {
 				}
 				
 				logger.debug("Edited Feedback for user {}", feedback.getUserId());
-				model.addAttribute(MESSAGE, "Feedback Edited Successfully");
+				model.addAttribute(GusetbookConstants.MESSAGE,adminFeedbackEdit );
 			}
 		} catch (Exception e) {
 			logger.error("Exception occured in AdminController.editedFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE, "Some problem occured while editing the feedback");
+			model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
 		}
-		return REDIRECT_ADMIN_FEEDBACK;
+		return GusetbookConstants.REDIRECT_ADMIN_FEEDBACK;
 	}
 
-	/*This method returns the logged in user name*/
+	
+	/**
+	 * This method returns the logged in user name
+	 * @return
+	 */
 	private String getLoggedUserName() {
 		String loggedUser = "";
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
