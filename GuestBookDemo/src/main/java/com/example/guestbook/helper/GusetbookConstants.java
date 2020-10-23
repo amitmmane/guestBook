@@ -4,6 +4,7 @@ public class GusetbookConstants {
 	
 	public static final String LOGGED_IN_USERNAME = "loggedinUserName";
 	public static final String MESSAGE = "message";
+	public static final String ERROR = "error";
 	public static final String FEEDBACK_LIST = "feedbackList";
 	public static final String FEEDBACK = "feedback";
 	public static final String YES = "Y";

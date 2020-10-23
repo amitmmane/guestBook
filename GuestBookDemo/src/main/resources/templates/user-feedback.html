@@ -45,8 +45,18 @@
 		</div>
 		<br>
 		<div th:if="${#lists.isEmpty(feedbackList)}">
-		<div class="alert alert-danger" align="center"><h3><b>No Feedbacks to display </b></h3></div>
+		<div class="alert alert-danger" align="center"><h2><b>No Feedbacks to display </b></h2></div>
 		</div>
+		<div th:if="${message}">
+                <div class="alert alert-success" align="center" >
+                  <h2><b>  [[${message}]]</b></h2>
+                </div>
+         </div>
+         <div th:if="${error}">
+                <div class="alert alert-danger" align="center" >
+                  <h2><b>  [[${error}]]</b></h2>
+                </div>
+         </div>
 		<br>
 		<div class="card">
 			<table class="table table-fit table-bordered text-center">

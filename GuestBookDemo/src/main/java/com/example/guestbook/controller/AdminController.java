@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.guestbook.entity.Feedback;
 import com.example.guestbook.entity.User;
@@ -97,16 +98,16 @@ public class AdminController{
 	 * @return
 	 */
 	@GetMapping("/deleteFeedback")
-	public String deleteFeedback(@Param("id") int id, Model model) {
+	public String deleteFeedback(@Param("id") int id, RedirectAttributes redirectAttributes) {
 		logger.info("Entered into AdminController.deleteFeedback() with id{}", id);
 
 		try {
 			feedbackService.deleteFeedbackById(id);
 			logger.info("Deleted successfully Feedback with id {}", id);
-			model.addAttribute(GusetbookConstants.MESSAGE,adminFeedbackDelete);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.MESSAGE,adminFeedbackDelete);
 		} catch (Exception e) {
 			logger.error("Exception occured in AdminController.deleteFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, errorMessage);
 		}
 		return GusetbookConstants.REDIRECT_ADMIN_FEEDBACK;
 	}
@@ -119,25 +120,25 @@ public class AdminController{
 	 * @return
 	 */
 	@GetMapping("/approveFeedback")
-	public String approveFeedback(@Param("id") int id, Model model) {
+	public String approveFeedback(@Param("id") int id, RedirectAttributes redirectAttributes) {
 		logger.info("Entered into AdminController.approveFeedback() with id{}", id);
 
 		try {
 			Optional<Feedback> result = feedbackService.findFeedbackById(id);
 			if (!result.isPresent()) {
 				logger.info("No feedback obtained from current id{}", id);
-				model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
+				redirectAttributes.addFlashAttribute(GusetbookConstants.MESSAGE, errorMessage);
 			} else {
 				Feedback feedback = result.get();
 				feedback.setFeedbackApproved(true);
 				feedbackService.saveFeedback(feedback);
-				model.addAttribute(GusetbookConstants.
+				redirectAttributes.addFlashAttribute(GusetbookConstants.
 						MESSAGE,adminFeedbackApprove);
 				logger.debug("Approved Feedback successfully for user {}", feedback.getUserId());
 			}
 		} catch (Exception e) {
 			logger.error("Exception occured in AdminController.approveFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, errorMessage);
 		}
 		return GusetbookConstants.REDIRECT_ADMIN_FEEDBACK;
 	}
@@ -168,7 +169,7 @@ public class AdminController{
 			}
 		} catch (Exception e) {
 			logger.error("Exception occured in AdminController.editFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(GusetbookConstants.MESSAGE, "Some problem occured");
+			model.addAttribute(GusetbookConstants.ERROR, "Some problem occured");
 		}
 		return "edit-feedback";
 	}
@@ -181,11 +182,11 @@ public class AdminController{
 	 * @param file
 	 * @param model
 	 * @return
-	 * @throws Exception
+	 * 
 	 */
 	@PostMapping("/editedFeedback")
 	public String editedFeedback(@RequestParam("id") int id, @RequestParam(value ="feedbacktext", required=false) String feedbacktext,
-			@RequestParam(value ="file", required=false) MultipartFile file, Model model) throws Exception {
+			@RequestParam(value ="file", required=false) MultipartFile file, RedirectAttributes redirectAttributes) {
 		logger.info("Entered into AdminController.editedFeedback() with id{}", id);
 
 		try {
@@ -197,7 +198,7 @@ public class AdminController{
 			Optional<Feedback> result = feedbackService.findFeedbackById(id);
 			if (!result.isPresent()) {
 				logger.info("No feedback obtained for current id{}", id);
-				model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
+				redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, errorMessage);
 			} else {
 				Feedback feedback = result.get();
 				if(!StringUtils.isEmpty(feedbacktext) && StringUtils.isEmpty(file.getOriginalFilename())) {
@@ -218,11 +219,11 @@ public class AdminController{
 				}
 				
 				logger.debug("Edited Feedback for user {}", feedback.getUserId());
-				model.addAttribute(GusetbookConstants.MESSAGE,adminFeedbackEdit );
+				redirectAttributes.addFlashAttribute(GusetbookConstants.MESSAGE,adminFeedbackEdit );
 			}
 		} catch (Exception e) {
 			logger.error("Exception occured in AdminController.editedFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(GusetbookConstants.MESSAGE, errorMessage);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, errorMessage);
 		}
 		return GusetbookConstants.REDIRECT_ADMIN_FEEDBACK;
 	}

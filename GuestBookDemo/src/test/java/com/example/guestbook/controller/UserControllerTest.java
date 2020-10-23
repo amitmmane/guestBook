@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -74,6 +75,8 @@ public class UserControllerTest {
 		
 		ReflectionTestUtils.setField(appController, "errorMessage", "Some error occurred please try again");
 		ReflectionTestUtils.setField(appController, "userFeebackPending", "Your Feedback Is Pending For Admin Approval");
+		ReflectionTestUtils.setField(appController, "imageSizeError", "File size exceeds the allowed size 1MB");
+		ReflectionTestUtils.setField(appController, "imageTypeError", "Only .jpg and .png files supported");
 	}
 
 	@Test
@@ -134,7 +137,7 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void testSubmitFeedback_Success() throws Exception {
+	public void testSubmitFeedbackImage_Success() throws Exception {
 
 		/* When feedback is added successfully by User with option Image */
 		doNothing().when(feedbackService).saveFeedback(Mockito.any(Feedback.class));
@@ -143,19 +146,19 @@ public class UserControllerTest {
 		user.setFirstName("Amit");
 		Mockito.when(userService.findByEmail(Mockito.anyString())).thenReturn(user);
 
-		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
+		MockMultipartFile file = new MockMultipartFile("file", "orig.png", "Some String", "bar".getBytes());
 		mockMvc.perform(multipart("/user/submitFeedback/image").file(file).param("id", "1"))
-				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Your Feedback Is Pending For Admin Approval"));
+				.andExpect(status().is3xxRedirection()).andExpect(flash().attributeExists("message"))
+				.andExpect(flash().attribute("message", "Your Feedback Is Pending For Admin Approval"));
 
 		verify(feedbackService, times(1)).saveFeedback(Mockito.any(Feedback.class));
 	}
 	
 	
 	@Test
-	public void testSubmitFeedback_Success1() throws Exception {
+	public void testSubmitFeedbackText_Success() throws Exception {
 
-		/* When feedback is added successfully by User with option text */
+		/* When feedback is added successfully by User with option as text */
 		doNothing().when(feedbackService).saveFeedback(Mockito.any(Feedback.class));
 		
 		User user= new User() ;
@@ -163,14 +166,14 @@ public class UserControllerTest {
 		Mockito.when(userService.findByEmail(Mockito.anyString())).thenReturn(user);
 
 		mockMvc.perform(post("/user/submitFeedback/text").param("id", "1").param("feedbacktext", "sample"))
-				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Your Feedback Is Pending For Admin Approval"));
+				.andExpect(status().is3xxRedirection()).andExpect(flash().attributeExists("message"))
+				.andExpect(flash().attribute("message", "Your Feedback Is Pending For Admin Approval"));
 
 		verify(feedbackService, times(1)).saveFeedback(Mockito.any(Feedback.class));
 	}
 
 	@Test
-	public void testSubmitFeedback_Failure() throws Exception {
+	public void testSubmitFeedbackImage_Failure() throws Exception {
 
 		/*
 		 * When while adding feedback exception is thrown by
@@ -180,12 +183,77 @@ public class UserControllerTest {
 		User user= new User() ;
 		user.setFirstName("Amit");
 		Mockito.when(userService.findByEmail(Mockito.anyString())).thenReturn(user);
-		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
+		MockMultipartFile file = new MockMultipartFile("file", "orig.png", "Some String", "bar".getBytes());
 		mockMvc.perform(multipart("/user/submitFeedback/image").file(file).param("id", "1"))
-				.andExpect(status().is3xxRedirection()).andExpect(model().attributeExists("message"))
-				.andExpect(model().attribute("message", "Some error occurred please try again"));
+				.andExpect(status().is3xxRedirection()).andExpect(flash().attributeExists("error"))
+				.andExpect(flash().attribute("error", "Some error occurred please try again"));
 
 		verify(feedbackService, times(1)).saveFeedback(Mockito.any(Feedback.class));
+	}
+	
+	
+	@Test
+	public void testSubmitFeedbackImage_FailureByType() throws Exception {
+
+		/*
+		 * When while adding feedback image type 
+		 * is not from allowed type
+		 */
+		
+		User user= new User() ;
+		user.setFirstName("Amit");
+		MockMultipartFile file = new MockMultipartFile("file", null, null, "byte".getBytes());
+		mockMvc.perform(multipart("/user/submitFeedback/image").file(file).param("id", "1"))
+				.andExpect(status().is3xxRedirection()).andExpect(flash().attributeExists("error"))
+				.andExpect(flash().attribute("error", "Only .jpg and .png files supported"));
+
+	}
+	
+	
+	@Test
+	public void testSubmitFeedbackImage_FailureBySize() throws Exception {
+
+		/*
+		 * When while adding feedback image size 
+		 * exceeds than 1MB
+		 */
+		
+		byte[] bytes = new byte[100000000];
+		MockMultipartFile file = new MockMultipartFile("file", null, null, bytes);
+		mockMvc.perform(multipart("/user/submitFeedback/image").file(file).param("id", "1"))
+				.andExpect(status().is3xxRedirection()).andExpect(flash().attributeExists("error"))
+				.andExpect(flash().attribute("error", "File size exceeds the allowed size 1MB"));
+
+	}
+	
+	@Test
+	public void testSubmitFeedbackBoth_Success() throws Exception {
+
+		/* When feedback is added successfully by User with Both image and text */
+		doNothing().when(feedbackService).saveFeedback(Mockito.any(Feedback.class));
+		User user= new User() ;
+		user.setFirstName("Amit");
+		Mockito.when(userService.findByEmail(Mockito.anyString())).thenReturn(user);
+		
+		MockMultipartFile file = new MockMultipartFile("file", "orig.png", "Some Text", "bar".getBytes());
+		mockMvc.perform(multipart("/user/submitFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
+				.andExpect(status().is3xxRedirection()).andExpect(flash().attributeExists("message"))
+				.andExpect(flash().attribute("message", "Your Feedback Is Pending For Admin Approval"));
+
+		verify(feedbackService, times(1)).saveFeedback(Mockito.any(Feedback.class));
+	}
+
+	@Test
+	public void testSubmitFeedbackBoth_Failure() throws Exception {
+
+		/*
+		 * When while adding feedback exception is thrown by
+		 * feedbackService.saveFeedback()
+		 */
+		MockMultipartFile file = new MockMultipartFile("file", "orig.png", "Some Text", "bar".getBytes());
+		mockMvc.perform(multipart("/user/submitFeedback").file(file).param("id", "1").param("feedbacktext", "a123"))
+				.andExpect(status().is3xxRedirection()).andExpect(flash().attributeExists("error"))
+				.andExpect(flash().attribute("error", "Some error occurred please try again"));
 	}
 
 	@Test

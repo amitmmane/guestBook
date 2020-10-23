@@ -10,7 +10,7 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="/css/gbs.css">
+<link rel="stylesheet" href="/css/gb.css">
 
 </head>
 <body>
@@ -43,6 +43,16 @@
 		<div th:if="${#lists.isEmpty(feedbackList)}">
 		<div class="alert alert-danger" align="center"><h3><b>No Feedbacks to display </b></h3></div>
 		</div>
+		<div th:if="${message}">
+                <div class="alert alert-success" align="center" >
+                  <h2><b>  [[${message}]]</b></h2>
+                </div>
+         </div>
+         <div th:if="${error}">
+                <div class="alert alert-danger" align="center" >
+                  <h2><b>  [[${error}]]</b></h2>
+                </div>
+         </div>
 		<br>
 		<div class="card">
 		<div class="">
@@ -76,8 +86,8 @@
 										<a th:href="@{'/admin/deleteFeedback?id=' + ${temp.id}}"
 											onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
 									</div>
-									<div class="alert alert-warning" role="alert">
-										<a th:href="@{'/admin/editFeedback?id=' + ${temp.id}}"
+									<div class="alert alert-secondary" role="alert">
+										<a class="disabled" th:href="@{'/admin/editFeedback?id=' + ${temp.id}}"
 											onclick="return confirm('Are you sure you want to edit this item?');">Edit</a>
 									</div>
 								</div>

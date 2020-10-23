@@ -1,6 +1,11 @@
  body { background: #E0FFFF !important; 
  }
  
+ a.disabled {
+  pointer-events: none;
+  cursor: default;
+}
+ 
 
 
  

@@ -25,9 +25,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.guestbook.entity.Feedback;
 import com.example.guestbook.entity.User;
+import com.example.guestbook.helper.FileValidator;
 import com.example.guestbook.helper.GusetbookConstants;
 import com.example.guestbook.service.FeedbackService;
 import com.example.guestbook.service.UserService;
@@ -35,7 +37,7 @@ import com.example.guestbook.service.UserService;
 @PropertySource(value ="classpath:message.properties")
 @Controller
 @RequestMapping("/user")
-public class UserController extends GusetbookConstants {
+public class UserController {
 
 	@Autowired
 	private FeedbackService feedbackService;
@@ -49,8 +51,12 @@ public class UserController extends GusetbookConstants {
 	 @Value("${user.feedback.pending}")
 	 private String userFeebackPending;
 	 
+	 @Value("${image.size.error}")
+	 private String imageSizeError;
 	 
-
+	 @Value("${image.type.error}")
+	 private String imageTypeError;
+	 
 	Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	/**
@@ -63,7 +69,7 @@ public class UserController extends GusetbookConstants {
 		logger.info("Entered into UserController.welcome()");
 		
 		User user = userService.findByEmail(getLoggedUserName());
-		model.addAttribute(LOGGED_IN_USERNAME, user.getFirstName());
+		model.addAttribute(GusetbookConstants.LOGGED_IN_USERNAME, user.getFirstName());
 		return "welcome-user";
 	}
 
@@ -83,8 +89,8 @@ public class UserController extends GusetbookConstants {
 		} catch (Exception e) {
 			logger.error("Exception occured in UserController.viewFeedbackUser(){}{}", e.getMessage(), e);
 		}
-		model.addAttribute(FEEDBACK_LIST, feedbackList);
-		model.addAttribute(LOGGED_IN_USERNAME, getLoggedUserName());
+		model.addAttribute(GusetbookConstants.FEEDBACK_LIST, feedbackList);
+		model.addAttribute(GusetbookConstants.LOGGED_IN_USERNAME, getLoggedUserName());
 		return "user-feedback";
 	}
 
@@ -106,11 +112,19 @@ public class UserController extends GusetbookConstants {
 	 * @return
 	 */
 	@PostMapping("/submitFeedback/image")
-	public String submitFeedbackImage(@RequestParam("file" ) MultipartFile feedbackImage, Model model) {
-		logger.info("Entered into UserController.submitFeedback()");
+	public String submitFeedbackImage(@RequestParam("file" ) MultipartFile feedbackImage,RedirectAttributes redirectAttributes ) {
+		logger.info("Entered into UserController.submitFeedbackImage()");
 
 		try {
+			if(!FileValidator.validateBySize(feedbackImage)) {
+				redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, imageSizeError);
+				return "redirect:/user/addFeedback";
+			}
 			
+			if(!FileValidator.validateByExtension(feedbackImage)) {
+				redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, imageTypeError);
+				return "redirect:/user/addFeedback";
+			}
 			User user = userService.findByEmail(getLoggedUserName());
 			String filname = StringUtils.cleanPath(feedbackImage.getOriginalFilename());
 			Feedback feedback = new Feedback();
@@ -120,11 +134,11 @@ public class UserController extends GusetbookConstants {
 			feedback.setFeedbackTime(new Date());
 			feedback.setFirstName(user.getFirstName());
 			feedbackService.saveFeedback(feedback);
-			model.addAttribute(MESSAGE, userFeebackPending);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.MESSAGE, userFeebackPending);
 			logger.debug("Feedback Added Successfully for user{}", feedback.getUserId());
 		} catch (Exception e) {
 			logger.error("Exception occured in UserController.submitFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE, errorMessage);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, errorMessage);
 		}
 		return "redirect:/user/viewFeedbackUser";
 	}
@@ -135,10 +149,10 @@ public class UserController extends GusetbookConstants {
 	 * @param feedbacktext
 	 * @param model
 	 * @return
-	 * @throws IOException
+	 * 
 	 */
 	@PostMapping("/submitFeedback/text")
-	public String submitFeedbacktext(@RequestParam("feedbacktext") String feedbacktext, Model model) {
+	public String submitFeedbacktext(@RequestParam("feedbacktext") String feedbacktext, RedirectAttributes redirectAttributes) {
 		logger.info("Entered into UserController.submitFeedback()");
 
 		try {
@@ -149,11 +163,52 @@ public class UserController extends GusetbookConstants {
 			feedback.setFeedbackTime(new Date());
 			feedback.setFirstName(user.getFirstName());
 			feedbackService.saveFeedback(feedback);
-			model.addAttribute(MESSAGE, userFeebackPending);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.MESSAGE, userFeebackPending);
 			logger.debug("Feedback Added Successfully for user{}", feedback.getUserId());
 		} catch (Exception e) {
 			logger.error("Exception occured in UserController.submitFeedback(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE, errorMessage);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, errorMessage);
+		}
+		return "redirect:/user/viewFeedbackUser";
+	}
+	
+	/**
+	 * Adds the new feedback for logged in user
+	 * @param feedbackImage
+	 * @param feedbacktext
+	 * @param model
+	 * @return
+	 * 
+	 */
+	@PostMapping("/submitFeedback")
+	public String submitFeedback(@RequestParam("file") MultipartFile feedbackImage,
+			@RequestParam("feedbacktext") String feedbacktext, Model model,RedirectAttributes redirectAttributes) {
+		logger.info("Entered into UserController.submitFeedback()");
+
+		try {
+			if(!FileValidator.validateBySize(feedbackImage)) {
+				redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, imageSizeError);
+				return "redirect:/user/addFeedback";
+			}
+			if(!FileValidator.validateByExtension(feedbackImage)) {
+				redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, imageTypeError);
+				return "redirect:/user/addFeedback";
+			}
+			User user = userService.findByEmail(getLoggedUserName());
+			String filname = StringUtils.cleanPath(feedbackImage.getOriginalFilename());
+			Feedback feedback = new Feedback();
+			feedback.setFeedbackImageName(filname);
+			feedback.setUserId(getLoggedUserName());
+			feedback.setFeedbackText(feedbacktext);
+			feedback.setFeedbackImage(feedbackImage.getBytes());
+			feedback.setFeedbackTime(new Date());
+			feedback.setFirstName(user.getFirstName());
+			feedbackService.saveFeedback(feedback);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.MESSAGE, userFeebackPending);
+			logger.debug("Feedback Added Successfully for user{}", feedback.getUserId());
+		} catch (Exception e) {
+			logger.error("Exception occured in UserController.submitFeedback(){}{}", e.getMessage(), e);
+			redirectAttributes.addFlashAttribute(GusetbookConstants.ERROR, errorMessage);
 		}
 		return "redirect:/user/viewFeedbackUser";
 	}
@@ -167,14 +222,14 @@ public class UserController extends GusetbookConstants {
 	 * @return
 	 */
 	@GetMapping("/getFeedbackImage")
-	public String getFeedbackImage(@Param("id") int id, HttpServletResponse response, Model model) {
+	public String getFeedbackImage(@Param("id") int id, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		logger.info("Entered into UserController.getFeedbackImage() for id{}", id);
 
 		try {
 			Optional<Feedback> result = feedbackService.findFeedbackById(id);
 			if (!result.isPresent()) {
 				logger.info("No feedback obtained from current id{}", id);
-				model.addAttribute(MESSAGE,errorMessage);
+				redirectAttributes.addAttribute(GusetbookConstants.MESSAGE,errorMessage);
 			} else {
 				Feedback userInformation = result.get();
 				response.setContentType("APPLICATION/OCTET-STREAM");
@@ -186,7 +241,7 @@ public class UserController extends GusetbookConstants {
 			}
 		} catch (Exception e) {
 			logger.error("Exception occured in UserController.getFeedbackImage(){}{}", e.getMessage(), e);
-			model.addAttribute(MESSAGE,errorMessage);
+			redirectAttributes.addAttribute(GusetbookConstants.ERROR,errorMessage);
 		}
 		return "redirect:/user/viewFeedbackUser";
 	}
