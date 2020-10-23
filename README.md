@@ -28,7 +28,7 @@
 
 ### Running the application in Eclipse
 - Import the project in Eclipse as exisitng maven project
-- Build the project using M2 pugin pass the 
+- Build the project 
 - Run the Project as Spring Boot Application , pass arguments ``-Ddatasource.username={DB_Username}`` and ``-Ddatasource.pwd={DB_password}``
   Please replace {DB_Username}  and  {DB_password} with MySQL database credentials.
 
