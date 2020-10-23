@@ -10,7 +10,7 @@
 <!-- Bootstrap CSS -->
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
 <link rel="stylesheet" href="/css/gb.css">
 </head>
 
@@ -50,7 +50,7 @@
 						<hr>
 						<br>
 						<div class="md-form" align="left" th:if="${feedback.feedbackImageName}">
-								<a  th:href="@{'/user/getFeedbackImage?id=' + ${feedback.id}}"><b>Existing Feedback Image:</b>[[${feedback.feedbackImageName}]]</a>
+								<a  th:href="@{'/user/getFeedbackImage?id=' + ${feedback.id}}"><b>Existing Feedback Image: </b> [[${feedback.feedbackImageName}]]</a>
 						</div>
 						<div th:unless="${feedback.feedbackImageName}">
 							<div class="alert alert-danger">No Existing Feedback Image present</div>
@@ -84,28 +84,7 @@
 		</div>
 
 	</div>
-
-
-	<script type="text/javascript">
-		function validateFileType() {
-			var fileName = document.getElementById("file").value;
-			var idxDot = fileName.lastIndexOf(".") + 1;
-			var extFile = fileName.substr(idxDot, fileName.length)
-					.toLowerCase();
-			if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
-				alert("Uploading file ");
-			} else {
-				alert("Only jpg/jpeg and png files are allowed!");
-				window.location.href = "/user/addFeedback"
-			}
-		}
-	</script>
-
-
-
 </body>
-
-
 </html>
 
 
