@@ -138,7 +138,7 @@ public class UserController extends GusetbookConstants {
 	 * @throws IOException
 	 */
 	@PostMapping("/submitFeedback/text")
-	public String submitFeedbacktext(@RequestParam("feedbacktext") String feedbacktext, Model model) throws IOException {
+	public String submitFeedbacktext(@RequestParam("feedbacktext") String feedbacktext, Model model) {
 		logger.info("Entered into UserController.submitFeedback()");
 
 		try {

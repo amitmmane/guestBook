@@ -210,7 +210,6 @@ public class AdminController{
 					feedback.setFeedbackTime(new Date());
 					feedbackService.saveFeedback(feedback);
 				}else {
-					
 					feedback.setFeedbackText(feedbacktext);
 					feedback.setFeedbackTime(new Date());
 					feedback.setFeedbackImageName(filname);
