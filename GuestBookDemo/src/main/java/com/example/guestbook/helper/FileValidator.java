@@ -7,8 +7,6 @@ import java.util.Optional;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FileValidator {
-	
-	
 
 	public static boolean validateBySize(MultipartFile file) {
 
@@ -26,13 +24,12 @@ public class FileValidator {
 		List<String> allowedFileExtenstion = Arrays.asList("png", "jpg", "jpeg");
 		Optional<String> fileExtension = getExtensionByStringHandling(file.getOriginalFilename());
 
-		if (fileExtension.isPresent()) {
-			allowedFileExtenstion.contains(fileExtension.get().toLowerCase());
+		if (fileExtension.isPresent() && allowedFileExtenstion.contains(fileExtension.get().toLowerCase())) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	private static double getFileSizeMegaBytes(MultipartFile file) {
 		return (double) file.getSize() / (1024 * 1024);
 	}

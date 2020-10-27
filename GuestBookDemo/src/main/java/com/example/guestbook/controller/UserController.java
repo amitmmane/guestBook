@@ -1,6 +1,5 @@
 package com.example.guestbook.controller;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
